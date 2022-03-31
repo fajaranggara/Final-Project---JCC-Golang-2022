@@ -15,7 +15,9 @@ type GameInput struct {
 	Price 		int 		`json:"price"`
 	Description string 		`json:"description"`
 	ImageURL 	string 		`json:"image_url"`
+	GenreID		int			`json:"genre_id"`
 	CategoryID	int			`json:"category_id"`
+	PublisherID	int			`json:"publisher_id"`
 }
 
 // Get all Game godoc
@@ -59,8 +61,10 @@ func CreateGame(c *gin.Context) {
 		ReleaseDate: input.ReleaseDate, 
 		Price: input.Price,
 		Description: input.Description, 
-		ImageURL: input.ImageURL, 
+		ImageURL: input.ImageURL,
+		GenreID: input.GenreID, 
 		CategoryID: input.CategoryID,
+		PublisherID: input.PublisherID,
 	}
 	// get db from gin context
 	db := c.MustGet("db").(*gorm.DB)
@@ -126,7 +130,9 @@ func UpdateGame(c *gin.Context) {
 	updatedInputGame.Price = input.Price
 	updatedInputGame.Description = input.Description
 	updatedInputGame.ImageURL = input.ImageURL
+	updatedInputGame.GenreID = input.GenreID
 	updatedInputGame.CategoryID = input.CategoryID
+	updatedInputGame.PublisherID = input.PublisherID
 	updatedInputGame.UpdatedAt = time.Now()
 
 	db.Model(&game).Updates(updatedInputGame)
