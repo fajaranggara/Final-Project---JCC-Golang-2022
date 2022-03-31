@@ -60,6 +60,17 @@ definitions:
     - password
     - username
     type: object
+  controllers.ReviewInput:
+    properties:
+      content:
+        type: string
+      game_id:
+        type: integer
+      rate:
+        type: integer
+      user_id:
+        type: integer
+    type: object
   models.Category:
     properties:
       created_at:
@@ -121,6 +132,23 @@ definitions:
         type: string
       updated_at:
         type: string
+    type: object
+  models.Review:
+    properties:
+      content:
+        type: string
+      created_at:
+        type: string
+      game_id:
+        type: integer
+      id:
+        type: integer
+      rate:
+        type: integer
+      updated_at:
+        type: string
+      user_id:
+        type: integer
     type: object
 info:
   contact:
@@ -387,6 +415,27 @@ paths:
       security:
       - BearerToken: []
       summary: update a Game by id
+      tags:
+      - Game
+  /games/{id}/reviews:
+    get:
+      description: Get all reviews of spesific game by id
+      parameters:
+      - description: Game Id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Review'
+            type: array
+      summary: Get games review by game id
       tags:
       - Game
   /genres:
@@ -709,4 +758,104 @@ paths:
       summary: Register a user.
       tags:
       - Auth
+  /reviews:
+    get:
+      description: Get list of Review
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Review'
+            type: array
+      summary: Get all Review
+      tags:
+      - Review
+    post:
+      description: Create new Review
+      parameters:
+      - description: the body to create new review
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.ReviewInput'
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Review'
+      security:
+      - BearerToken: []
+      summary: Create a Review
+      tags:
+      - Review
+  /reviews/{id}:
+    delete:
+      description: delete one Review by id
+      parameters:
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Review Id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: boolean
+            type: object
+      security:
+      - BearerToken: []
+      summary: delete a Review by id
+      tags:
+      - Review
+    patch:
+      description: update one Review by id
+      parameters:
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Review Id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: the body to create new review
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.ReviewInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Review'
+      security:
+      - BearerToken: []
+      summary: update a Review by id
+      tags:
+      - Review
 swagger: "2.0"

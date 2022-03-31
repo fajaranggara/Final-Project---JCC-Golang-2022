@@ -3,8 +3,9 @@ package models
 import "time"
 
 type Game struct {
-	ID          int       	`gorm:"primary_key" json:"id"`
-	Name        string    	`json:"name"`
+	ID          int       	`json:"id" gorm:"primary_key"`
+	Name        string    	`json:"name" gorm:"not null"`
+	Ratings		float64		`json:"ratings"`		
 	ReleaseDate string    	`json:"release_date"`
 	Price 		int 		`json:"price"`
 	Description string 		`json:"description"`
@@ -17,4 +18,5 @@ type Game struct {
 	Genre		Genre		`json:"-"`
 	Category	Category	`json:"-"`
 	Publisher	Publisher	`json:"-"`
+	Review		[]Review	`json:"-"`
 }

@@ -163,3 +163,26 @@ func DeleteGame(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"data": true})
 }
+
+
+// Get reviews of a game godoc
+// @Summary Get games review by game id
+// @Description Get all reviews of spesific game by id
+// @Tags Game
+// @Produce json
+// @Param id path string true "Game Id"
+// @Success 200 {object} []models.Review
+// @Router /games/{id}/reviews [get]
+func GetGamesReview(c *gin.Context) {
+	// get db from gin context
+	db := c.MustGet("db").(*gorm.DB)
+
+	var reviews []models.Review
+	if err := db.Where("game_id = ?", c.Param("id")).Find(&reviews).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Record Not Found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": reviews})
+
+}

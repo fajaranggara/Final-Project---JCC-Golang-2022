@@ -17,6 +17,7 @@ type User struct {
 	Password  string    `json:"password" gorm:"not null"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
+	Review	  []Review	`json:"-"`
 }
 
 func VerifyPassword(password, hashedPassword string) error {
