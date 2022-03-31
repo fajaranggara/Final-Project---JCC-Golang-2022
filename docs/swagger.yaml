@@ -12,13 +12,22 @@ definitions:
         type: integer
       description:
         type: string
+      genre_id:
+        type: integer
       image_url:
         type: string
       name:
         type: string
       price:
         type: integer
+      publisher_id:
+        type: integer
       release_date:
+        type: string
+    type: object
+  controllers.GenreInput:
+    properties:
+      name:
         type: string
     type: object
   controllers.LoginInput:
@@ -30,6 +39,13 @@ definitions:
     required:
     - password
     - username
+    type: object
+  controllers.PublisherInput:
+    properties:
+      image_url:
+        type: string
+      name:
+        type: string
     type: object
   controllers.RegisterInput:
     properties:
@@ -78,6 +94,30 @@ definitions:
       publisher_id:
         type: integer
       release_date:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  models.Genre:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  models.Publisher:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      image_url:
+        type: string
+      name:
         type: string
       updated_at:
         type: string
@@ -349,6 +389,145 @@ paths:
       summary: update a Game by id
       tags:
       - Game
+  /genres:
+    get:
+      description: Get list of Genre
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Genre'
+            type: array
+      summary: Get all Genre
+      tags:
+      - Genre
+    post:
+      description: Create new Genre
+      parameters:
+      - description: the body to create new genre
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.GenreInput'
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Genre'
+      security:
+      - BearerToken: []
+      summary: Create a Genre
+      tags:
+      - Genre
+  /genres/{id}:
+    delete:
+      description: delete one Genre by id
+      parameters:
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Genre Id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: boolean
+            type: object
+      security:
+      - BearerToken: []
+      summary: delete a Genre by id
+      tags:
+      - Genre
+    get:
+      description: Get one Genre by id
+      parameters:
+      - description: Genre Id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Genre'
+      summary: Get Genre by id
+      tags:
+      - Genre
+    patch:
+      description: update one Genre by id
+      parameters:
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Genre Id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: the body to create new genre
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.GenreInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Genre'
+      security:
+      - BearerToken: []
+      summary: update a Genre by id
+      tags:
+      - Genre
+  /genres/{id}/games:
+    get:
+      description: Get all games of spesific Genre by id
+      parameters:
+      - description: Genre Id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Game'
+            type: array
+      summary: Get games by Genre by id
+      tags:
+      - Genre
   /login:
     post:
       description: Logging in to get jwt token to access admin or user api by roles.
@@ -370,6 +549,145 @@ paths:
       summary: Login as an user.
       tags:
       - Auth
+  /publishers:
+    get:
+      description: Get list of Publisher
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Publisher'
+            type: array
+      summary: Get all Publisher
+      tags:
+      - Publisher
+    post:
+      description: Create new Publisher
+      parameters:
+      - description: the body to create new publisher
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.PublisherInput'
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Publisher'
+      security:
+      - BearerToken: []
+      summary: Create a Publisher
+      tags:
+      - Publisher
+  /publishers/{id}:
+    delete:
+      description: delete one Publisher by id
+      parameters:
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Publisher Id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: boolean
+            type: object
+      security:
+      - BearerToken: []
+      summary: delete a Publisher by id
+      tags:
+      - Publisher
+    get:
+      description: Get one Publisher by id
+      parameters:
+      - description: Publisher Id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Publisher'
+      summary: Get Publisher by id
+      tags:
+      - Publisher
+    patch:
+      description: update one Publisher by id
+      parameters:
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Publisher Id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: the body to create new publisher
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.PublisherInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Publisher'
+      security:
+      - BearerToken: []
+      summary: update a Publisher by id
+      tags:
+      - Publisher
+  /publishers/{id}/games:
+    get:
+      description: Get all games of spesific Publisher by id
+      parameters:
+      - description: Publisher Id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Game'
+            type: array
+      summary: Get games by Publisher by id
+      tags:
+      - Publisher
   /register:
     post:
       description: registering a user from public access.
