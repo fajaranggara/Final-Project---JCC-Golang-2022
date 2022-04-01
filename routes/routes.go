@@ -21,6 +21,7 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 
 	r.POST("/login", controllers.Login)
 	r.POST("/register", controllers.Register)
+	r.PATCH("/users/:id/change-password", controllers.ChangePassword, middlewares.JwtAuthMiddleware())
 
 
 	r.GET("/categories", controllers.GetAllCategory)

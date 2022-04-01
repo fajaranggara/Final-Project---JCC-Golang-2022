@@ -66,3 +66,20 @@ func (usr *User) SaveUser(db *gorm.DB) (*User, error) {
 
 	return usr, nil
 }
+
+
+func (usr *User) SaveNewPassword(db *gorm.DB) (*User, error) {
+	hashedPassword, errPassword := bcrypt.GenerateFromPassword([]byte(usr.Password), bcrypt.DefaultCost)
+	if errPassword != nil {
+		return &User{}, errPassword
+	}
+
+	usr.Password = string(hashedPassword)
+
+	var err error = db.Save(&usr).Error
+	if err != nil {
+		return &User{}, err
+	}
+
+	return usr, nil
+}
