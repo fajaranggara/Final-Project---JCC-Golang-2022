@@ -4,7 +4,7 @@ import "time"
 
 type Review struct {
 	ID          int       `json:"id" gorm:"primary_key"`
-	Rate  		int    	  `json:"rate"`
+	Rate  		int    	  `json:"rate" gorm:"not null, min=1, max=5"`
 	Content		string    `json:"content"`
 	GameID  	int		  `json:"game_id" gorm:"not null"`
 	UserID		int		  `json:"user_id" gorm:"not null"`

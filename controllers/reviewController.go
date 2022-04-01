@@ -3,33 +3,40 @@ package controllers
 import (
 	"final-project/models"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
-type ReviewInput struct {
+type AddReviewInput struct {
 	Rate  		int    	  `json:"rate"`
 	Content		string    `json:"content"`
-	GameID  	int		  `json:"game_id"`
 	UserID		int		  `json:"user_id"`
 }
+type UpdateReviewInput struct {
+	Rate  		int    	  `json:"rate"`
+	Content		string    `json:"content"`
+}
 
-// Get all Review godoc
-// @Summary Get all Review
-// @Description Get list of Review
-// @Tags Review
+// Get reviews of a game godoc
+// @Summary Get games review by game id
+// @Description Get all reviews of spesific game by id
+// @Tags Game
 // @Produce json
+// @Param id path string true "Game Id"
 // @Success 200 {object} []models.Review
-// @Router /reviews [get]
-func GetAllReview(c *gin.Context) {
+// @Router /games/{id}/reviews [get]
+func GetGamesReview(c *gin.Context) {
 	// get db from gin context
 	db := c.MustGet("db").(*gorm.DB)
 
 	var reviews []models.Review
-
-	db.Find(&reviews)
+	if err := db.Where("game_id = ?", c.Param("id")).Find(&reviews).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Record Not Found"})
+		return
+	}
 
 	c.JSON(http.StatusOK, gin.H{"data": reviews})
 
@@ -44,22 +51,36 @@ func GetAllReview(c *gin.Context) {
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
 // @Produce json
+// @Param id path string true "Game Id"
 // @Success 200 {object} models.Review
-// @Router /reviews [post]
+// @Router /games/:id/reviews [post]
 func AddReview(c *gin.Context) {
-	var input ReviewInput
-
+	var input AddReviewInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	review := models.Review{Rate: input.Rate, Content: input.Content, GameID: input.GameID, UserID: input.UserID}
+	gameId,_ := strconv.Atoi(c.Param("id"))
+	review := models.Review{Rate: input.Rate, Content: input.Content, GameID: gameId, UserID: input.UserID}
+	
 	// get db from gin context
 	db := c.MustGet("db").(*gorm.DB)
 
+	var game models.Game
+	if err := db.Where("id = ?", c.Param("id")).First(&game).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Record Not Found"})
+		return
+	}
+
+	var updateGameRating models.Game
+	updateGameRating.Ratings = CalculateRating(&game, input.Rate)
+	updateGameRating.RatingsCounter = game.RatingsCounter + 1
+	updateGameRating.UpdatedAt = time.Now()
+
+	db.Model(&game).Updates(updateGameRating)
 	db.Create(&review)
-	c.JSON(http.StatusOK, gin.H{"data": review})
+	c.JSON(http.StatusOK, gin.H{"add": review, "game": game})
 
 }
 
@@ -84,7 +105,7 @@ func UpdateReview(c *gin.Context) {
 		return
 	}
 
-	var input ReviewInput
+	var input UpdateReviewInput
 
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -95,8 +116,6 @@ func UpdateReview(c *gin.Context) {
 
 	updatedInputReview.Rate = input.Rate
 	updatedInputReview.Content = input.Content
-	updatedInputReview.GameID = input.GameID
-	updatedInputReview.UserID = input.UserID
 	updatedInputReview.UpdatedAt = time.Now()
 
 	db.Model(&review).Updates(updatedInputReview)

@@ -69,14 +69,14 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 	gameMiddleware.POST("/", controllers.CreateGame)
 	gameMiddleware.PATCH("/:id", controllers.UpdateGame)
 	gameMiddleware.DELETE("/:id", controllers.DeleteGame)
+	gameMiddleware.POST("/:id/reviews", controllers.AddReview)
 	// end
 
 
-	r.GET("/reviews", controllers.GetAllReview)
+	//r.GET("/reviews", controllers.GetAllReview)
 	// middleware for game
 	reviewMiddleware := r.Group("/reviews")
 	reviewMiddleware.Use(middlewares.JwtAuthMiddleware())
-	reviewMiddleware.POST("/", controllers.AddReview)
 	reviewMiddleware.PATCH("/:id", controllers.UpdateReview)
 	reviewMiddleware.DELETE("/:id", controllers.DeleteReview)
 	// end
