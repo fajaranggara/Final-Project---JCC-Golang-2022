@@ -7,7 +7,6 @@ type Game struct {
 	Name        string    	`json:"name" gorm:"not null"`
 	Ratings		float64		`json:"ratings"`		
 	ReleaseDate string    	`json:"release_date"`
-	Price 		int 		`json:"price"`
 	Description string 		`json:"description"`
 	ImageURL 	string 		`json:"image_url"`
 	GenreID		int			`json:"genre_id"`

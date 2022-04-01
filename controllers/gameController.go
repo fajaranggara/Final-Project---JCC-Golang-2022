@@ -12,7 +12,6 @@ import (
 type GameInput struct {
 	Name        string 		`json:"name"`
 	ReleaseDate string    	`json:"release_date"`
-	Price 		int 		`json:"price"`
 	Description string 		`json:"description"`
 	ImageURL 	string 		`json:"image_url"`
 	GenreID		int			`json:"genre_id"`
@@ -58,8 +57,7 @@ func CreateGame(c *gin.Context) {
 	}
 
 	game := models.Game{Name: input.Name, 
-		ReleaseDate: input.ReleaseDate, 
-		Price: input.Price,
+		ReleaseDate: input.ReleaseDate,
 		Description: input.Description, 
 		ImageURL: input.ImageURL,
 		GenreID: input.GenreID, 
@@ -127,7 +125,6 @@ func UpdateGame(c *gin.Context) {
 
 	updatedInputGame.Name = input.Name
 	updatedInputGame.ReleaseDate = input.ReleaseDate
-	updatedInputGame.Price = input.Price
 	updatedInputGame.Description = input.Description
 	updatedInputGame.ImageURL = input.ImageURL
 	updatedInputGame.GenreID = input.GenreID
