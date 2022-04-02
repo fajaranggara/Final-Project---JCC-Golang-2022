@@ -7,7 +7,7 @@ type Game struct {
 	Name        string    	`json:"name" gorm:"not null"`
 	Ratings		int			`json:"ratings"`
 	RatingsCounter int      `json:"ratings_counter"`		
-	ReleaseDate string    	`json:"release_date"`
+	ReleaseDate time.Time  	`json:"release_date"`
 	Description string 		`json:"description"`
 	ImageURL 	string 		`json:"image_url"`
 	GenreID		int			`json:"genre_id"`

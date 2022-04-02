@@ -1,12 +1,16 @@
 definitions:
-  controllers.AddReviewInput:
+  controllers.AddGameInput:
     properties:
-      content:
+      category_id:
+        type: integer
+      description:
         type: string
-      rate:
+      genre_id:
         type: integer
-      user_id:
-        type: integer
+      image_url:
+        type: string
+      name:
+        type: string
     type: object
   controllers.CategoryInput:
     properties:
@@ -24,23 +28,6 @@ definitions:
     required:
     - current_password
     - new_password
-    type: object
-  controllers.GameInput:
-    properties:
-      category_id:
-        type: integer
-      description:
-        type: string
-      genre_id:
-        type: integer
-      image_url:
-        type: string
-      name:
-        type: string
-      publisher_id:
-        type: integer
-      release_date:
-        type: string
     type: object
   controllers.GenreInput:
     properties:
@@ -64,6 +51,11 @@ definitions:
       name:
         type: string
     type: object
+  controllers.RegisPublisherInput:
+    properties:
+      logo_url:
+        type: string
+    type: object
   controllers.RegisterInput:
     properties:
       email:
@@ -77,12 +69,25 @@ definitions:
     - password
     - username
     type: object
-  controllers.UpdateReviewInput:
+  controllers.ReviewInput:
     properties:
       content:
         type: string
       rate:
         type: integer
+    type: object
+  controllers.UpdateGameInput:
+    properties:
+      category_id:
+        type: integer
+      description:
+        type: string
+      genre_id:
+        type: integer
+      image_url:
+        type: string
+      name:
+        type: string
     type: object
   models.Bookmark:
     properties:
@@ -166,6 +171,8 @@ definitions:
         type: string
       updated_at:
         type: string
+      user_id:
+        type: integer
     type: object
   models.Review:
     properties:
@@ -331,14 +338,14 @@ paths:
       tags:
       - Public
     post:
-      description: Only admin have permission to create publisher
+      description: Only publisher and admin have permission to create games
       parameters:
-      - description: the body to create new game
+      - description: the body to create new games
         in: body
         name: Body
         required: true
         schema:
-          $ref: '#/definitions/controllers.GameInput'
+          $ref: '#/definitions/controllers.AddGameInput'
       - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
         in: header
         name: Authorization
@@ -353,73 +360,9 @@ paths:
             $ref: '#/definitions/models.Game'
       security:
       - BearerToken: []
-      summary: Create a new game
+      summary: Create a new games
       tags:
-      - Admin
-  /games/:id/add-reviews:
-    post:
-      description: Create new review
-      parameters:
-      - description: the body to create new review
-        in: body
-        name: Body
-        required: true
-        schema:
-          $ref: '#/definitions/controllers.AddReviewInput'
-      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Games Id
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.Review'
-      security:
-      - BearerToken: []
-      summary: Create a review
-      tags:
-      - Games
-  /games/:id/add-to-bookmark:
-    patch:
-      description: User add games to bookmark
-      parameters:
-      - description: the body to add games into bookmark
-        in: body
-        name: Body
-        required: true
-        schema:
-          $ref: '#/definitions/controllers.AddReviewInput'
-      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Game Id
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.Bookmark'
-      security:
-      - BearerToken: []
-      summary: Bookmarked games
-      tags:
-      - Games
+      - Publisher
   /games/{id}:
     delete:
       description: Only admin have permission to delete game
@@ -447,7 +390,7 @@ paths:
       - BearerToken: []
       summary: Delete existing game by id
       tags:
-      - Admin
+      - Publisher
     get:
       description: Get one game by id
       parameters:
@@ -484,7 +427,7 @@ paths:
         name: Body
         required: true
         schema:
-          $ref: '#/definitions/controllers.GameInput'
+          $ref: '#/definitions/controllers.UpdateGameInput'
       produces:
       - application/json
       responses:
@@ -496,12 +439,70 @@ paths:
       - BearerToken: []
       summary: Update existing game by id
       tags:
-      - Admin
+      - Publisher
+  /games/{id}/add-reviews:
+    post:
+      description: Create new review
+      parameters:
+      - description: the body to create new review
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.ReviewInput'
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Game Id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Review'
+      security:
+      - BearerToken: []
+      summary: Create a review
+      tags:
+      - Games
+  /games/{id}/add-to-bookmark:
+    patch:
+      description: User add games to bookmark
+      parameters:
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Game Id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Bookmark'
+      security:
+      - BearerToken: []
+      summary: Bookmarked games
+      tags:
+      - Games
   /games/{id}/reviews:
     get:
       description: Get all reviews of spesific games
       parameters:
-      - description: Games Id
+      - description: Game Id
         in: path
         name: id
         required: true
@@ -848,7 +849,7 @@ paths:
         name: Body
         required: true
         schema:
-          $ref: '#/definitions/controllers.UpdateReviewInput'
+          $ref: '#/definitions/controllers.ReviewInput'
       produces:
       - application/json
       responses:
@@ -914,7 +915,7 @@ paths:
       - Users
   /users/change-password:
     patch:
-      description: renew users password.
+      description: Renew users password.
       parameters:
       - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
         in: header
@@ -960,6 +961,34 @@ paths:
       security:
       - BearerToken: []
       summary: Get info of current login user
+      tags:
+      - Users
+  /users/regist-publisher:
+    patch:
+      description: Become publisher by upgrade your role.
+      parameters:
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: the body to become publisher
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.RegisPublisherInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerToken: []
+      summary: Regist to become publisher.
       tags:
       - Users
 swagger: "2.0"

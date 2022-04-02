@@ -10,12 +10,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type AddReviewInput struct {
-	Rate  		int    	  `json:"rate"`
-	Content		string    `json:"content"`
-	UserID		int		  `json:"user_id"`
-}
-type UpdateReviewInput struct {
+type ReviewInput struct {
 	Rate  		int    	  `json:"rate"`
 	Content		string    `json:"content"`
 }
@@ -25,7 +20,7 @@ type UpdateReviewInput struct {
 // @Description Get all reviews of spesific games
 // @Tags Public
 // @Produce json
-// @Param id path string true "Games Id"
+// @Param id path string true "Game Id"
 // @Success 200 {object} []models.Review
 // @Router /games/{id}/reviews [get]
 func GetGamesReview(c *gin.Context) {
@@ -45,47 +40,50 @@ func GetGamesReview(c *gin.Context) {
 // @Summary Create a review
 // @Description Create new review
 // @Tags Games
-// @Param Body body AddReviewInput true "the body to create new review"
+// @Param Body body ReviewInput true "the body to create new review"
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
 // @Produce json
-// @Param id path string true "Games Id"
+// @Param id path string true "Game Id"
 // @Success 200 {object} models.Review
-// @Router /games/:id/add-reviews [post]
+// @Router /games/{id}/add-reviews [post]
 func AddReview(c *gin.Context) {
-	var input AddReviewInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
+	db := c.MustGet("db").(*gorm.DB)
 	// get current user
-	usr, err := models.GetCurrentUser(c)
+	cUser, err := models.GetCurrentUser(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "You need to sign in to add review"})
 		return
 	}
 
-	gameId,_ := strconv.Atoi(c.Param("id"))
-	review := models.Review{Rate: input.Rate, Content: input.Content, GameID: gameId, UserID: int(usr.ID)}
-	
-	db := c.MustGet("db").(*gorm.DB)
-
-	var game models.Game
-	if err := db.Where("id = ?", c.Param("id")).First(&game).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Record Not Found"})
+	var input ReviewInput
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
+	id, _ := strconv.Atoi(c.Param("id"))
+	review := models.Review{
+		Rate: input.Rate, 
+		Content: input.Content, 
+		GameID: id, 
+		UserID: int(cUser.ID),
+	}
+	db.Create(&review)
+
+	var game models.Game
+	if err := db.Where("id = ?", c.Param("id")).First(&game).Error; err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
 	var updateGameRating models.Game
 	updateGameRating.Ratings = CalculateRating(&game, input.Rate)
 	updateGameRating.RatingsCounter = game.RatingsCounter + 1
 	updateGameRating.UpdatedAt = time.Now()
 
 	db.Model(&game).Updates(updateGameRating)
-	db.Create(&review)
-	c.JSON(http.StatusOK, gin.H{"add": review, "game": game})
 
+	c.JSON(http.StatusOK, gin.H{"add": review})
 }
 
 // Update Review godoc
@@ -96,7 +94,7 @@ func AddReview(c *gin.Context) {
 // @Security BearerToken
 // @Produce json
 // @Param id path string true "Review Id"
-// @Param Body body UpdateReviewInput true "the body to create new review"
+// @Param Body body ReviewInput true "the body to create new review"
 // @Success 200 {object} models.Review
 // @Router /reviews/{id} [patch]
 func UpdateReview(c *gin.Context) {	
@@ -115,7 +113,7 @@ func UpdateReview(c *gin.Context) {
 		return
 	}
 
-	var input UpdateReviewInput
+	var input ReviewInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

@@ -44,8 +44,8 @@ func GetGamesByPublisherId(c *gin.Context) {
 	// get db from gin context
 	db := c.MustGet("db").(*gorm.DB)
 
-	var games []models.Publisher
-	if err := db.Where("genre_id = ?", c.Param("id")).Find(&games).Error; err != nil {
+	var games []models.Game
+	if err := db.Where("publisher_id = ?", c.Param("id")).Find(&games).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record Not Found"})
 		return
 	}

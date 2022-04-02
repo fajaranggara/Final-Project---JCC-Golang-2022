@@ -10,14 +10,19 @@ import (
 	"gorm.io/gorm"
 )
 
-type GameInput struct {
+type AddGameInput struct {
 	Name        string 		`json:"name"`
-	ReleaseDate string    	`json:"release_date"`
 	Description string 		`json:"description"`
 	ImageURL 	string 		`json:"image_url"`
 	GenreID		int			`json:"genre_id"`
 	CategoryID	int			`json:"category_id"`
-	PublisherID	int			`json:"publisher_id"`
+}
+type UpdateGameInput struct {
+	Name        string 		`json:"name"`
+	Description string 		`json:"description"`
+	ImageURL 	string 		`json:"image_url"`
+	GenreID		int			`json:"genre_id"`
+	CategoryID	int			`json:"category_id"`
 }
 
 // Get all Game godoc
@@ -60,41 +65,48 @@ func GetGameById(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": game})
 }
 
-// Create Game godoc
-// @Summary Create a new game
-// @Description Only admin have permission to create publisher
-// @Tags Admin
-// @Param Body body GameInput true "the body to create new game"
+// Create Games godoc
+// @Summary Create a new games
+// @Description Only publisher and admin have permission to create games
+// @Tags Publisher
+// @Param Body body AddGameInput true "the body to create new games"
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
 // @Produce json
 // @Success 200 {object} models.Game
 // @Router /games [post]
 func CreateGame(c *gin.Context) {
+	// get db from gin context
+	db := c.MustGet("db").(*gorm.DB)
 	//check authorization
 	cUser, _ := models.GetCurrentUser(c)
-	if cUser.Role != "admin" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Only for admin level user"})
+	if cUser.Role != "publisher" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Only for publisher level user"})
         return
 	}
 
-	var input GameInput
-
+	var input AddGameInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	game := models.Game{Name: input.Name, 
-		ReleaseDate: input.ReleaseDate,
+	var publisher models.Publisher
+	if err := db.Where("user_id = ?", cUser.ID).First(&publisher).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Record Not Found"})
+		return
+	}
+
+	game := models.Game{Name: input.Name,
+		Ratings: 0,
+		RatingsCounter: 0, 
+		ReleaseDate: time.Now(),
 		Description: input.Description, 
 		ImageURL: input.ImageURL,
 		GenreID: input.GenreID, 
 		CategoryID: input.CategoryID,
-		PublisherID: input.PublisherID,
+		PublisherID: publisher.ID,
 	}
-	// get db from gin context
-	db := c.MustGet("db").(*gorm.DB)
 
 	db.Create(&game)
 	c.JSON(http.StatusOK, gin.H{"data": game})
@@ -103,30 +115,41 @@ func CreateGame(c *gin.Context) {
 // Update Game godoc
 // @Summary Update existing game by id
 // @Description Only admin have permission to update game
-// @Tags Admin
+// @Tags Publisher
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
 // @Produce json
 // @Param id path string true "Game Id"
-// @Param Body body GameInput true "the body to create new game"
+// @Param Body body UpdateGameInput true "the body to create new game"
 // @Success 200 {object} models.Game
 // @Router /games/{id} [patch]
 func UpdateGame(c *gin.Context) {
+	db := c.MustGet("db").(*gorm.DB)
 	//check authorization
 	cUser, _ := models.GetCurrentUser(c)
-	if cUser.Role != "admin" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Only for admin level user"})
+	if cUser.Role != "publisher" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Only for publisher level user"})
         return
 	}
 
-	db := c.MustGet("db").(*gorm.DB)
 	var game models.Game
 	if err := db.Where("id = ?", c.Param("id")).First(&game).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record Not Found"})
 		return
 	}
 
-	var input GameInput
+	uidPublisher, err := getUserIdByPublisherId(game.PublisherID, db)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	// check if current user is the same user who create this review
+	if uidPublisher != int(cUser.ID) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "You don't have permission to edit this review"})
+		return
+	}
+
+	var input UpdateGameInput
 
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -136,12 +159,10 @@ func UpdateGame(c *gin.Context) {
 	var updatedInputGame models.Game
 
 	updatedInputGame.Name = input.Name
-	updatedInputGame.ReleaseDate = input.ReleaseDate
 	updatedInputGame.Description = input.Description
 	updatedInputGame.ImageURL = input.ImageURL
 	updatedInputGame.GenreID = input.GenreID
 	updatedInputGame.CategoryID = input.CategoryID
-	updatedInputGame.PublisherID = input.PublisherID
 	updatedInputGame.UpdatedAt = time.Now()
 
 	db.Model(&game).Updates(updatedInputGame)
@@ -151,7 +172,7 @@ func UpdateGame(c *gin.Context) {
 // Delete a Game godoc
 // @Summary Delete existing game by id
 // @Description Only admin have permission to delete game
-// @Tags Admin
+// @Tags Publisher
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
 // @Produce json
@@ -161,8 +182,8 @@ func UpdateGame(c *gin.Context) {
 func DeleteGame(c *gin.Context) {
 	//check authorization
 	cUser, _ := models.GetCurrentUser(c)
-	if cUser.Role != "admin" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Only for admin level user"})
+	if cUser.Role != "publisher" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Only for publisher level user"})
         return
 	}
 	
@@ -171,6 +192,17 @@ func DeleteGame(c *gin.Context) {
 	var game models.Game
 	if err := db.Where("id = ?", c.Param("id")).First(&game).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record Not Found"})
+		return
+	}
+
+	uidPublisher, err := getUserIdByPublisherId(game.PublisherID, db)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	// check if current user is the same user who create this review
+	if uidPublisher != int(cUser.ID) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "You don't have permission to edit this review"})
 		return
 	}
 
@@ -185,4 +217,13 @@ func CalculateRating(game *models.Game, newRate int) int {
 
 	rating := ((float64(game.Ratings) * float64(game.RatingsCounter)) + float64(newRate)) / float64(counter)
 	return int(math.Round(rating))
+}
+
+func getUserIdByPublisherId(publisherId int, db *gorm.DB) (int, error) {
+	var publisher models.Publisher
+	if err := db.Where("user_id = ?", publisherId).First(&publisher).Error; err != nil {
+		return 0, err
+	}
+
+	return publisher.UserID, nil
 }

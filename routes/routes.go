@@ -54,7 +54,9 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 		userMiddleware.GET("/profiles", controllers.GetUserProfile)
 		userMiddleware.GET("/bookmarks", controllers.ShowUserBookmark)
 		userMiddleware.DELETE("/bookmarks/:id", controllers.DeleteBookmarkedGame)
-	
+		userMiddleware.PATCH("/regist-publisher", controllers.RegisPublisher)
+		
+		
 		// games
 		gamesMiddleware.POST("/:id/add-reviews", controllers.AddReview)
 		reviewMiddleware.PATCH("/:id", controllers.UpdateReview)
@@ -64,11 +66,9 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 
 	// PUBLISHER LEVEL: can be access by userr with role{"publisher", "admin"}
 	{
-		// gameMiddleware := r.Group("/games")
-		// gameMiddleware.Use(middlewares.JwtAuthMiddleware())
-		// gameMiddleware.POST("/", controllers.CreateGame)
-		// gameMiddleware.PATCH("/:id", controllers.UpdateGame)
-		// gameMiddleware.DELETE("/:id", controllers.DeleteGame)
+		gamesMiddleware.POST("/", controllers.CreateGame)
+		gamesMiddleware.PATCH("/:id", controllers.UpdateGame)
+		gamesMiddleware.DELETE("/:id", controllers.DeleteGame)
 
 	}
 	
@@ -85,10 +85,6 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 		publisherMiddleware.POST("/", controllers.CreatePublisher)
 		publisherMiddleware.PATCH("/:id", controllers.UpdatePublisher)
 		publisherMiddleware.DELETE("/:id", controllers.DeletePublisher)
-
-		gamesMiddleware.POST("/", controllers.CreateGame)
-		gamesMiddleware.PATCH("/:id", controllers.UpdateGame)
-		gamesMiddleware.DELETE("/:id", controllers.DeleteGame)
 	}
 
 	

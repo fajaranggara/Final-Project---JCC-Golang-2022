@@ -241,22 +241,22 @@ const docTemplate = `{
                         "BearerToken": []
                     }
                 ],
-                "description": "Only admin have permission to create publisher",
+                "description": "Only publisher and admin have permission to create games",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Admin"
+                    "Publisher"
                 ],
-                "summary": "Create a new game",
+                "summary": "Create a new games",
                 "parameters": [
                     {
-                        "description": "the body to create new game",
+                        "description": "the body to create new games",
                         "name": "Body",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controllers.GameInput"
+                            "$ref": "#/definitions/controllers.AddGameInput"
                         }
                     },
                     {
@@ -272,106 +272,6 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/models.Game"
-                        }
-                    }
-                }
-            }
-        },
-        "/games/:id/add-reviews": {
-            "post": {
-                "security": [
-                    {
-                        "BearerToken": []
-                    }
-                ],
-                "description": "Create new review",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Games"
-                ],
-                "summary": "Create a review",
-                "parameters": [
-                    {
-                        "description": "the body to create new review",
-                        "name": "Body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.AddReviewInput"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Authorization. How to input in swagger : 'Bearer \u003cinsert_your_token_here\u003e'",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Games Id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.Review"
-                        }
-                    }
-                }
-            }
-        },
-        "/games/:id/add-to-bookmark": {
-            "patch": {
-                "security": [
-                    {
-                        "BearerToken": []
-                    }
-                ],
-                "description": "User add games to bookmark",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Games"
-                ],
-                "summary": "Bookmarked games",
-                "parameters": [
-                    {
-                        "description": "the body to add games into bookmark",
-                        "name": "Body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.AddReviewInput"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Authorization. How to input in swagger : 'Bearer \u003cinsert_your_token_here\u003e'",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Game Id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.Bookmark"
                         }
                     }
                 }
@@ -416,7 +316,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Admin"
+                    "Publisher"
                 ],
                 "summary": "Delete existing game by id",
                 "parameters": [
@@ -458,7 +358,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Admin"
+                    "Publisher"
                 ],
                 "summary": "Update existing game by id",
                 "parameters": [
@@ -482,7 +382,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controllers.GameInput"
+                            "$ref": "#/definitions/controllers.UpdateGameInput"
                         }
                     }
                 ],
@@ -491,6 +391,97 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/models.Game"
+                        }
+                    }
+                }
+            }
+        },
+        "/games/{id}/add-reviews": {
+            "post": {
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ],
+                "description": "Create new review",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Games"
+                ],
+                "summary": "Create a review",
+                "parameters": [
+                    {
+                        "description": "the body to create new review",
+                        "name": "Body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.ReviewInput"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Authorization. How to input in swagger : 'Bearer \u003cinsert_your_token_here\u003e'",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Game Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Review"
+                        }
+                    }
+                }
+            }
+        },
+        "/games/{id}/add-to-bookmark": {
+            "patch": {
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ],
+                "description": "User add games to bookmark",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Games"
+                ],
+                "summary": "Bookmarked games",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authorization. How to input in swagger : 'Bearer \u003cinsert_your_token_here\u003e'",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Game Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Bookmark"
                         }
                     }
                 }
@@ -509,7 +500,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Games Id",
+                        "description": "Game Id",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -1046,7 +1037,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controllers.UpdateReviewInput"
+                            "$ref": "#/definitions/controllers.ReviewInput"
                         }
                     }
                 ],
@@ -1148,7 +1139,7 @@ const docTemplate = `{
                         "BearerToken": []
                     }
                 ],
-                "description": "renew users password.",
+                "description": "Renew users password.",
                 "produces": [
                     "application/json"
                 ],
@@ -1219,20 +1210,70 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/users/regist-publisher": {
+            "patch": {
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ],
+                "description": "Become publisher by upgrade your role.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Regist to become publisher.",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authorization. How to input in swagger : 'Bearer \u003cinsert_your_token_here\u003e'",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "the body to become publisher",
+                        "name": "Body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.RegisPublisherInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
-        "controllers.AddReviewInput": {
+        "controllers.AddGameInput": {
             "type": "object",
             "properties": {
-                "content": {
+                "category_id": {
+                    "type": "integer"
+                },
+                "description": {
                     "type": "string"
                 },
-                "rate": {
+                "genre_id": {
                     "type": "integer"
                 },
-                "user_id": {
-                    "type": "integer"
+                "image_url": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
                 }
             }
         },
@@ -1258,32 +1299,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "new_password": {
-                    "type": "string"
-                }
-            }
-        },
-        "controllers.GameInput": {
-            "type": "object",
-            "properties": {
-                "category_id": {
-                    "type": "integer"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "genre_id": {
-                    "type": "integer"
-                },
-                "image_url": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "publisher_id": {
-                    "type": "integer"
-                },
-                "release_date": {
                     "type": "string"
                 }
             }
@@ -1322,6 +1337,14 @@ const docTemplate = `{
                 }
             }
         },
+        "controllers.RegisPublisherInput": {
+            "type": "object",
+            "properties": {
+                "logo_url": {
+                    "type": "string"
+                }
+            }
+        },
         "controllers.RegisterInput": {
             "type": "object",
             "required": [
@@ -1341,7 +1364,7 @@ const docTemplate = `{
                 }
             }
         },
-        "controllers.UpdateReviewInput": {
+        "controllers.ReviewInput": {
             "type": "object",
             "properties": {
                 "content": {
@@ -1349,6 +1372,26 @@ const docTemplate = `{
                 },
                 "rate": {
                     "type": "integer"
+                }
+            }
+        },
+        "controllers.UpdateGameInput": {
+            "type": "object",
+            "properties": {
+                "category_id": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "genre_id": {
+                    "type": "integer"
+                },
+                "image_url": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
                 }
             }
         },
@@ -1476,6 +1519,9 @@ const docTemplate = `{
                 },
                 "updated_at": {
                     "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
                 }
             }
         },

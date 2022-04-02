@@ -19,8 +19,8 @@ import (
 // @Router /users/bookmarks [get]
 func ShowUserBookmark(c *gin.Context) {
 	cUser, _ := models.GetCurrentUser(c)
-	if cUser.Role != "admin" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Only for admin level user"})
+	if cUser.Role != "user" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "You need to login"})
         return
 	}
 
@@ -39,18 +39,17 @@ func ShowUserBookmark(c *gin.Context) {
 // @Summary Bookmarked games
 // @Description User add games to bookmark
 // @Tags Games
-// @Param Body body AddReviewInput true "the body to add games into bookmark"
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
 // @Produce json
 // @Param id path string true "Game Id"
 // @Success 200 {object} models.Bookmark
-// @Router /games/:id/add-to-bookmark [patch]
+// @Router /games/{id}/add-to-bookmark [patch]
 func AddGameToBookmark(c *gin.Context) {
 	//check authorization
-	cUser, _ := models.GetCurrentUser(c)
-	if cUser.Role != "admin" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Only for admin level user"})
+	cUser, err := models.GetCurrentUser(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "You need to login"})
         return
 	}
 
@@ -58,7 +57,7 @@ func AddGameToBookmark(c *gin.Context) {
 
 	var game models.Game
 	if err := db.Where("id = ?", c.Param("id")).First(&game).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Record Not Found"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Record Not Found", "err": c.Param("id")})
 		return
 	}
 
