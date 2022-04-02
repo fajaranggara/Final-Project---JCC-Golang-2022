@@ -27,14 +27,14 @@ const docTemplate = `{
     "paths": {
         "/categories": {
             "get": {
-                "description": "Get list of Category",
+                "description": "Get list of category",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Category"
                 ],
-                "summary": "Get all Category",
+                "summary": "Get all category",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -53,14 +53,14 @@ const docTemplate = `{
                         "BearerToken": []
                     }
                 ],
-                "description": "Create new Category",
+                "description": "Only admin have permission to create category",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Category"
                 ],
-                "summary": "Create a Category",
+                "summary": "Create a new category",
                 "parameters": [
                     {
                         "description": "the body to create new category",
@@ -91,14 +91,14 @@ const docTemplate = `{
         },
         "/categories/{id}": {
             "get": {
-                "description": "Get one Category by id",
+                "description": "Get one category by id",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Category"
                 ],
-                "summary": "Get Category by id",
+                "summary": "Get category by id",
                 "parameters": [
                     {
                         "type": "string",
@@ -123,14 +123,14 @@ const docTemplate = `{
                         "BearerToken": []
                     }
                 ],
-                "description": "delete one Category by id",
+                "description": "Only admin have permission to delete category",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Category"
                 ],
-                "summary": "delete a Category by id",
+                "summary": "Delete existing category by id",
                 "parameters": [
                     {
                         "type": "string",
@@ -165,14 +165,14 @@ const docTemplate = `{
                         "BearerToken": []
                     }
                 ],
-                "description": "update one Category by id",
+                "description": "Only admin have permission to update category",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Category"
                 ],
-                "summary": "update a Category by id",
+                "summary": "Update existing category by id",
                 "parameters": [
                     {
                         "type": "string",
@@ -210,14 +210,14 @@ const docTemplate = `{
         },
         "/categories/{id}/games": {
             "get": {
-                "description": "Get all games of spesific Category by id",
+                "description": "Get all games of spesific category by id",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Category"
+                    "Games"
                 ],
-                "summary": "Get games by Category by id",
+                "summary": "Get games in a category by id",
                 "parameters": [
                     {
                         "type": "string",
@@ -268,14 +268,14 @@ const docTemplate = `{
                         "BearerToken": []
                     }
                 ],
-                "description": "Create new Game",
+                "description": "Only admin have permission to create publisher",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Game"
                 ],
-                "summary": "Create a Game",
+                "summary": "Create a new game",
                 "parameters": [
                     {
                         "description": "the body to create new game",
@@ -304,9 +304,59 @@ const docTemplate = `{
                 }
             }
         },
+        "/games/:id/reviews": {
+            "post": {
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ],
+                "description": "Create new review",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Review"
+                ],
+                "summary": "Create a review",
+                "parameters": [
+                    {
+                        "description": "the body to create new review",
+                        "name": "Body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.AddReviewInput"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Authorization. How to input in swagger : 'Bearer \u003cinsert_your_token_here\u003e'",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Game Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Review"
+                        }
+                    }
+                }
+            }
+        },
         "/games/{id}": {
             "get": {
-                "description": "Get one Game by id",
+                "description": "Get one game by id",
                 "produces": [
                     "application/json"
                 ],
@@ -338,14 +388,14 @@ const docTemplate = `{
                         "BearerToken": []
                     }
                 ],
-                "description": "delete one Game by id",
+                "description": "Only admin have permission to delete game",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Game"
                 ],
-                "summary": "delete a Game by id",
+                "summary": "Delete existing game by id",
                 "parameters": [
                     {
                         "type": "string",
@@ -380,14 +430,14 @@ const docTemplate = `{
                         "BearerToken": []
                     }
                 ],
-                "description": "update one Game by id",
+                "description": "Only admin have permission to update game",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Game"
                 ],
-                "summary": "update a Game by id",
+                "summary": "Update existing game by id",
                 "parameters": [
                     {
                         "type": "string",
@@ -425,14 +475,14 @@ const docTemplate = `{
         },
         "/games/{id}/reviews": {
             "get": {
-                "description": "Get all reviews of spesific game by id",
+                "description": "Get all reviews of spesific game",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Game"
                 ],
-                "summary": "Get games review by game id",
+                "summary": "Get reviews of a game by gameID",
                 "parameters": [
                     {
                         "type": "string",
@@ -457,14 +507,14 @@ const docTemplate = `{
         },
         "/genres": {
             "get": {
-                "description": "Get list of Genre",
+                "description": "Get list of genre",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Genre"
                 ],
-                "summary": "Get all Genre",
+                "summary": "Get all genre",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -483,14 +533,14 @@ const docTemplate = `{
                         "BearerToken": []
                     }
                 ],
-                "description": "Create new Genre",
+                "description": "Only admin have permission to create genre",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Genre"
                 ],
-                "summary": "Create a Genre",
+                "summary": "Create a new genre",
                 "parameters": [
                     {
                         "description": "the body to create new genre",
@@ -521,14 +571,14 @@ const docTemplate = `{
         },
         "/genres/{id}": {
             "get": {
-                "description": "Get one Genre by id",
+                "description": "Get one genre by id",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Genre"
                 ],
-                "summary": "Get Genre by id",
+                "summary": "Get genre by id",
                 "parameters": [
                     {
                         "type": "string",
@@ -553,14 +603,14 @@ const docTemplate = `{
                         "BearerToken": []
                     }
                 ],
-                "description": "delete one Genre by id",
+                "description": "Only admin have permission to delete genre",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Genre"
                 ],
-                "summary": "delete a Genre by id",
+                "summary": "Delete existing genre by id",
                 "parameters": [
                     {
                         "type": "string",
@@ -595,14 +645,14 @@ const docTemplate = `{
                         "BearerToken": []
                     }
                 ],
-                "description": "update one Genre by id",
+                "description": "Only admin have permission to update genre",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Genre"
                 ],
-                "summary": "update a Genre by id",
+                "summary": "Update existing genre by id",
                 "parameters": [
                     {
                         "type": "string",
@@ -640,14 +690,14 @@ const docTemplate = `{
         },
         "/genres/{id}/games": {
             "get": {
-                "description": "Get all games of spesific Genre by id",
+                "description": "Get all games of spesific genre by id",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Genre"
+                    "Games"
                 ],
-                "summary": "Get games by Genre by id",
+                "summary": "Get games in a genre by id",
                 "parameters": [
                     {
                         "type": "string",
@@ -704,14 +754,14 @@ const docTemplate = `{
         },
         "/publishers": {
             "get": {
-                "description": "Get list of Publisher",
+                "description": "Get list of publisher",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Publisher"
                 ],
-                "summary": "Get all Publisher",
+                "summary": "Get all publisher",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -730,14 +780,14 @@ const docTemplate = `{
                         "BearerToken": []
                     }
                 ],
-                "description": "Create new Publisher",
+                "description": "Only admin have permission to create publisher",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Publisher"
                 ],
-                "summary": "Create a Publisher",
+                "summary": "Create a new publisher",
                 "parameters": [
                     {
                         "description": "the body to create new publisher",
@@ -768,14 +818,14 @@ const docTemplate = `{
         },
         "/publishers/{id}": {
             "get": {
-                "description": "Get one Publisher by id",
+                "description": "Get one publisher by id",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Publisher"
                 ],
-                "summary": "Get Publisher by id",
+                "summary": "Get publisher by id",
                 "parameters": [
                     {
                         "type": "string",
@@ -800,14 +850,14 @@ const docTemplate = `{
                         "BearerToken": []
                     }
                 ],
-                "description": "delete one Publisher by id",
+                "description": "Only admin have permission to delete publisher",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Publisher"
                 ],
-                "summary": "delete a Publisher by id",
+                "summary": "Delete existing publisher by id",
                 "parameters": [
                     {
                         "type": "string",
@@ -842,14 +892,14 @@ const docTemplate = `{
                         "BearerToken": []
                     }
                 ],
-                "description": "update one Publisher by id",
+                "description": "Only admin have permission to update publisher",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Publisher"
                 ],
-                "summary": "update a Publisher by id",
+                "summary": "Update existing publisher by id",
                 "parameters": [
                     {
                         "type": "string",
@@ -887,14 +937,14 @@ const docTemplate = `{
         },
         "/publishers/{id}/games": {
             "get": {
-                "description": "Get all games of spesific Publisher by id",
+                "description": "Get all games of spesific publisher by id",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Publisher"
+                    "Games"
                 ],
-                "summary": "Get games by Publisher by id",
+                "summary": "Get games in a publisher by id",
                 "parameters": [
                     {
                         "type": "string",
@@ -949,70 +999,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/reviews": {
-            "get": {
-                "description": "Get list of Review",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Review"
-                ],
-                "summary": "Get all Review",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Review"
-                            }
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "BearerToken": []
-                    }
-                ],
-                "description": "Create new Review",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Review"
-                ],
-                "summary": "Create a Review",
-                "parameters": [
-                    {
-                        "description": "the body to create new review",
-                        "name": "Body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.ReviewInput"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Authorization. How to input in swagger : 'Bearer \u003cinsert_your_token_here\u003e'",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.Review"
-                        }
-                    }
-                }
-            }
-        },
         "/reviews/{id}": {
             "delete": {
                 "security": [
@@ -1020,14 +1006,14 @@ const docTemplate = `{
                         "BearerToken": []
                     }
                 ],
-                "description": "delete one Review by id",
+                "description": "Only user who create this review have permission to update",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Review"
                 ],
-                "summary": "delete a Review by id",
+                "summary": "Delete existing review by id",
                 "parameters": [
                     {
                         "type": "string",
@@ -1062,14 +1048,14 @@ const docTemplate = `{
                         "BearerToken": []
                     }
                 ],
-                "description": "update one Review by id",
+                "description": "Only user who create this review have permission to update",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Review"
                 ],
-                "summary": "update a Review by id",
+                "summary": "Update existing review by id",
                 "parameters": [
                     {
                         "type": "string",
@@ -1091,7 +1077,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controllers.ReviewInput"
+                            "$ref": "#/definitions/controllers.UpdateReviewInput"
                         }
                     }
                 ],
@@ -1105,7 +1091,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/users/{id}/change-password": {
+        "/users/change-password": {
             "patch": {
                 "security": [
                     {
@@ -1129,13 +1115,6 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "type": "string",
-                        "description": "User Id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "description": "the body to change user password",
                         "name": "Body",
                         "in": "body",
@@ -1155,9 +1134,58 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/users/profile": {
+            "get": {
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ],
+                "description": "Get logged in user info",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get info of current login user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authorization. How to input in swagger : 'Bearer \u003cinsert_your_token_here\u003e'",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "controllers.AddReviewInput": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "rate": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "controllers.CategoryInput": {
             "type": "object",
             "properties": {
@@ -1201,9 +1229,6 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
-                },
-                "price": {
-                    "type": "integer"
                 },
                 "publisher_id": {
                     "type": "integer"
@@ -1266,19 +1291,13 @@ const docTemplate = `{
                 }
             }
         },
-        "controllers.ReviewInput": {
+        "controllers.UpdateReviewInput": {
             "type": "object",
             "properties": {
                 "content": {
                     "type": "string"
                 },
-                "game_id": {
-                    "type": "integer"
-                },
                 "rate": {
-                    "type": "integer"
-                },
-                "user_id": {
                     "type": "integer"
                 }
             }
@@ -1327,14 +1346,14 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
-                "price": {
-                    "type": "integer"
-                },
                 "publisher_id": {
                     "type": "integer"
                 },
                 "ratings": {
-                    "type": "number"
+                    "type": "integer"
+                },
+                "ratings_counter": {
+                    "type": "integer"
                 },
                 "release_date": {
                     "type": "string"

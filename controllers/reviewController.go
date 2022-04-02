@@ -45,7 +45,7 @@ func GetGamesReview(c *gin.Context) {
 // @Summary Create a review
 // @Description Create new review
 // @Tags Review
-// @Param Body body ReviewInput true "the body to create new review"
+// @Param Body body AddReviewInput true "the body to create new review"
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
 // @Produce json
@@ -96,7 +96,7 @@ func AddReview(c *gin.Context) {
 // @Security BearerToken
 // @Produce json
 // @Param id path string true "Review Id"
-// @Param Body body ReviewInput true "the body to create new review"
+// @Param Body body UpdateReviewInput true "the body to create new review"
 // @Success 200 {object} models.Review
 // @Router /reviews/{id} [patch]
 func UpdateReview(c *gin.Context) {	

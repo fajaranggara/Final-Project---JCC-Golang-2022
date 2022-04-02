@@ -1,4 +1,13 @@
 definitions:
+  controllers.AddReviewInput:
+    properties:
+      content:
+        type: string
+      rate:
+        type: integer
+      user_id:
+        type: integer
+    type: object
   controllers.CategoryInput:
     properties:
       description:
@@ -28,8 +37,6 @@ definitions:
         type: string
       name:
         type: string
-      price:
-        type: integer
       publisher_id:
         type: integer
       release_date:
@@ -70,15 +77,11 @@ definitions:
     - password
     - username
     type: object
-  controllers.ReviewInput:
+  controllers.UpdateReviewInput:
     properties:
       content:
         type: string
-      game_id:
-        type: integer
       rate:
-        type: integer
-      user_id:
         type: integer
     type: object
   models.Category:
@@ -110,12 +113,12 @@ definitions:
         type: string
       name:
         type: string
-      price:
-        type: integer
       publisher_id:
         type: integer
       ratings:
-        type: number
+        type: integer
+      ratings_counter:
+        type: integer
       release_date:
         type: string
       updated_at:
@@ -174,7 +177,7 @@ info:
 paths:
   /categories:
     get:
-      description: Get list of Category
+      description: Get list of category
       produces:
       - application/json
       responses:
@@ -184,11 +187,11 @@ paths:
             items:
               $ref: '#/definitions/models.Category'
             type: array
-      summary: Get all Category
+      summary: Get all category
       tags:
       - Category
     post:
-      description: Create new Category
+      description: Only admin have permission to create category
       parameters:
       - description: the body to create new category
         in: body
@@ -210,12 +213,12 @@ paths:
             $ref: '#/definitions/models.Category'
       security:
       - BearerToken: []
-      summary: Create a Category
+      summary: Create a new category
       tags:
       - Category
   /categories/{id}:
     delete:
-      description: delete one Category by id
+      description: Only admin have permission to delete category
       parameters:
       - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
         in: header
@@ -238,11 +241,11 @@ paths:
             type: object
       security:
       - BearerToken: []
-      summary: delete a Category by id
+      summary: Delete existing category by id
       tags:
       - Category
     get:
-      description: Get one Category by id
+      description: Get one category by id
       parameters:
       - description: Category Id
         in: path
@@ -256,11 +259,11 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/models.Category'
-      summary: Get Category by id
+      summary: Get category by id
       tags:
       - Category
     patch:
-      description: update one Category by id
+      description: Only admin have permission to update category
       parameters:
       - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
         in: header
@@ -287,12 +290,12 @@ paths:
             $ref: '#/definitions/models.Category'
       security:
       - BearerToken: []
-      summary: update a Category by id
+      summary: Update existing category by id
       tags:
       - Category
   /categories/{id}/games:
     get:
-      description: Get all games of spesific Category by id
+      description: Get all games of spesific category by id
       parameters:
       - description: Category Id
         in: path
@@ -308,9 +311,9 @@ paths:
             items:
               $ref: '#/definitions/models.Game'
             type: array
-      summary: Get games by Category by id
+      summary: Get games in a category by id
       tags:
-      - Category
+      - Games
   /games:
     get:
       description: Get list of Game
@@ -327,7 +330,7 @@ paths:
       tags:
       - Game
     post:
-      description: Create new Game
+      description: Only admin have permission to create publisher
       parameters:
       - description: the body to create new game
         in: body
@@ -349,12 +352,44 @@ paths:
             $ref: '#/definitions/models.Game'
       security:
       - BearerToken: []
-      summary: Create a Game
+      summary: Create a new game
       tags:
       - Game
+  /games/:id/reviews:
+    post:
+      description: Create new review
+      parameters:
+      - description: the body to create new review
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.AddReviewInput'
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Game Id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Review'
+      security:
+      - BearerToken: []
+      summary: Create a review
+      tags:
+      - Review
   /games/{id}:
     delete:
-      description: delete one Game by id
+      description: Only admin have permission to delete game
       parameters:
       - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
         in: header
@@ -377,11 +412,11 @@ paths:
             type: object
       security:
       - BearerToken: []
-      summary: delete a Game by id
+      summary: Delete existing game by id
       tags:
       - Game
     get:
-      description: Get one Game by id
+      description: Get one game by id
       parameters:
       - description: Game Id
         in: path
@@ -399,7 +434,7 @@ paths:
       tags:
       - Game
     patch:
-      description: update one Game by id
+      description: Only admin have permission to update game
       parameters:
       - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
         in: header
@@ -426,12 +461,12 @@ paths:
             $ref: '#/definitions/models.Game'
       security:
       - BearerToken: []
-      summary: update a Game by id
+      summary: Update existing game by id
       tags:
       - Game
   /games/{id}/reviews:
     get:
-      description: Get all reviews of spesific game by id
+      description: Get all reviews of spesific game
       parameters:
       - description: Game Id
         in: path
@@ -447,12 +482,12 @@ paths:
             items:
               $ref: '#/definitions/models.Review'
             type: array
-      summary: Get games review by game id
+      summary: Get reviews of a game by gameID
       tags:
       - Game
   /genres:
     get:
-      description: Get list of Genre
+      description: Get list of genre
       produces:
       - application/json
       responses:
@@ -462,11 +497,11 @@ paths:
             items:
               $ref: '#/definitions/models.Genre'
             type: array
-      summary: Get all Genre
+      summary: Get all genre
       tags:
       - Genre
     post:
-      description: Create new Genre
+      description: Only admin have permission to create genre
       parameters:
       - description: the body to create new genre
         in: body
@@ -488,12 +523,12 @@ paths:
             $ref: '#/definitions/models.Genre'
       security:
       - BearerToken: []
-      summary: Create a Genre
+      summary: Create a new genre
       tags:
       - Genre
   /genres/{id}:
     delete:
-      description: delete one Genre by id
+      description: Only admin have permission to delete genre
       parameters:
       - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
         in: header
@@ -516,11 +551,11 @@ paths:
             type: object
       security:
       - BearerToken: []
-      summary: delete a Genre by id
+      summary: Delete existing genre by id
       tags:
       - Genre
     get:
-      description: Get one Genre by id
+      description: Get one genre by id
       parameters:
       - description: Genre Id
         in: path
@@ -534,11 +569,11 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/models.Genre'
-      summary: Get Genre by id
+      summary: Get genre by id
       tags:
       - Genre
     patch:
-      description: update one Genre by id
+      description: Only admin have permission to update genre
       parameters:
       - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
         in: header
@@ -565,12 +600,12 @@ paths:
             $ref: '#/definitions/models.Genre'
       security:
       - BearerToken: []
-      summary: update a Genre by id
+      summary: Update existing genre by id
       tags:
       - Genre
   /genres/{id}/games:
     get:
-      description: Get all games of spesific Genre by id
+      description: Get all games of spesific genre by id
       parameters:
       - description: Genre Id
         in: path
@@ -586,9 +621,9 @@ paths:
             items:
               $ref: '#/definitions/models.Game'
             type: array
-      summary: Get games by Genre by id
+      summary: Get games in a genre by id
       tags:
-      - Genre
+      - Games
   /login:
     post:
       description: Logging in to get jwt token to access admin or user api by roles.
@@ -612,7 +647,7 @@ paths:
       - Auth
   /publishers:
     get:
-      description: Get list of Publisher
+      description: Get list of publisher
       produces:
       - application/json
       responses:
@@ -622,11 +657,11 @@ paths:
             items:
               $ref: '#/definitions/models.Publisher'
             type: array
-      summary: Get all Publisher
+      summary: Get all publisher
       tags:
       - Publisher
     post:
-      description: Create new Publisher
+      description: Only admin have permission to create publisher
       parameters:
       - description: the body to create new publisher
         in: body
@@ -648,12 +683,12 @@ paths:
             $ref: '#/definitions/models.Publisher'
       security:
       - BearerToken: []
-      summary: Create a Publisher
+      summary: Create a new publisher
       tags:
       - Publisher
   /publishers/{id}:
     delete:
-      description: delete one Publisher by id
+      description: Only admin have permission to delete publisher
       parameters:
       - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
         in: header
@@ -676,11 +711,11 @@ paths:
             type: object
       security:
       - BearerToken: []
-      summary: delete a Publisher by id
+      summary: Delete existing publisher by id
       tags:
       - Publisher
     get:
-      description: Get one Publisher by id
+      description: Get one publisher by id
       parameters:
       - description: Publisher Id
         in: path
@@ -694,11 +729,11 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/models.Publisher'
-      summary: Get Publisher by id
+      summary: Get publisher by id
       tags:
       - Publisher
     patch:
-      description: update one Publisher by id
+      description: Only admin have permission to update publisher
       parameters:
       - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
         in: header
@@ -725,12 +760,12 @@ paths:
             $ref: '#/definitions/models.Publisher'
       security:
       - BearerToken: []
-      summary: update a Publisher by id
+      summary: Update existing publisher by id
       tags:
       - Publisher
   /publishers/{id}/games:
     get:
-      description: Get all games of spesific Publisher by id
+      description: Get all games of spesific publisher by id
       parameters:
       - description: Publisher Id
         in: path
@@ -746,9 +781,9 @@ paths:
             items:
               $ref: '#/definitions/models.Game'
             type: array
-      summary: Get games by Publisher by id
+      summary: Get games in a publisher by id
       tags:
-      - Publisher
+      - Games
   /register:
     post:
       description: registering a user from public access.
@@ -770,50 +805,9 @@ paths:
       summary: Register a user.
       tags:
       - Auth
-  /reviews:
-    get:
-      description: Get list of Review
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.Review'
-            type: array
-      summary: Get all Review
-      tags:
-      - Review
-    post:
-      description: Create new Review
-      parameters:
-      - description: the body to create new review
-        in: body
-        name: Body
-        required: true
-        schema:
-          $ref: '#/definitions/controllers.ReviewInput'
-      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.Review'
-      security:
-      - BearerToken: []
-      summary: Create a Review
-      tags:
-      - Review
   /reviews/{id}:
     delete:
-      description: delete one Review by id
+      description: Only user who create this review have permission to update
       parameters:
       - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
         in: header
@@ -836,11 +830,11 @@ paths:
             type: object
       security:
       - BearerToken: []
-      summary: delete a Review by id
+      summary: Delete existing review by id
       tags:
       - Review
     patch:
-      description: update one Review by id
+      description: Only user who create this review have permission to update
       parameters:
       - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
         in: header
@@ -857,7 +851,7 @@ paths:
         name: Body
         required: true
         schema:
-          $ref: '#/definitions/controllers.ReviewInput'
+          $ref: '#/definitions/controllers.UpdateReviewInput'
       produces:
       - application/json
       responses:
@@ -867,21 +861,16 @@ paths:
             $ref: '#/definitions/models.Review'
       security:
       - BearerToken: []
-      summary: update a Review by id
+      summary: Update existing review by id
       tags:
       - Review
-  /users/{id}/change-password:
+  /users/change-password:
     patch:
       description: renew users password.
       parameters:
       - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
         in: header
         name: Authorization
-        required: true
-        type: string
-      - description: User Id
-        in: path
-        name: id
         required: true
         type: string
       - description: the body to change user password
@@ -901,6 +890,28 @@ paths:
       security:
       - BearerToken: []
       summary: Change users password.
+      tags:
+      - User
+  /users/profile:
+    get:
+      description: Get logged in user info
+      parameters:
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerToken: []
+      summary: Get info of current login user
       tags:
       - User
 swagger: "2.0"
