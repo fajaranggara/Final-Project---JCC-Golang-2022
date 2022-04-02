@@ -39,20 +39,20 @@ func GetGamesReview(c *gin.Context) {
 // Create Review godoc
 // @Summary Create a review
 // @Description Create new review
-// @Tags Games
+// @Tags Users
 // @Param Body body ReviewInput true "the body to create new review"
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
 // @Produce json
 // @Param id path string true "Game Id"
 // @Success 200 {object} models.Review
-// @Router /games/{id}/add-reviews [post]
+// @Router /users/games/{id}/add-reviews [post]
 func AddReview(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
-	// get current user
-	cUser, err := models.GetCurrentUser(c)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "You need to sign in to add review"})
+	//check authorization
+	cUser, _ := models.GetCurrentUser(c)
+	if cUser.Role != "user" {
+		c.JSON(http.StatusBadRequest, gin.H{"forbidden": "Allowed role: user"})
 		return
 	}
 
@@ -89,16 +89,22 @@ func AddReview(c *gin.Context) {
 // Update Review godoc
 // @Summary Update existing review by id
 // @Description Only user who create this review have permission to update
-// @Tags Games
+// @Tags Users
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
 // @Produce json
 // @Param id path string true "Review Id"
 // @Param Body body ReviewInput true "the body to create new review"
 // @Success 200 {object} models.Review
-// @Router /reviews/{id} [patch]
+// @Router /users/games/reviews/{id} [patch]
 func UpdateReview(c *gin.Context) {	
 	db := c.MustGet("db").(*gorm.DB)
+	//check authorization
+	cUser, _ := models.GetCurrentUser(c)
+	if cUser.Role != "user" {
+		c.JSON(http.StatusBadRequest, gin.H{"forbidden": "Allowed role: user"})
+		return
+	}
 
 	var review models.Review
 	if err := db.Where("id = ?", c.Param("id")).First(&review).Error; err != nil {
@@ -106,9 +112,8 @@ func UpdateReview(c *gin.Context) {
 		return
 	}
 
-	// check if current user is the same user who create this review
-	usr, _ := models.GetCurrentUser(c)
-	if review.UserID != int(usr.ID) {
+	// check if current user is owner of this review
+	if review.UserID != int(cUser.ID) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "You don't have permission to edit this review"})
 		return
 	}
@@ -132,15 +137,21 @@ func UpdateReview(c *gin.Context) {
 // Delete Review godoc
 // @Summary Delete existing review by id
 // @Description Only user who create this review have permission to update
-// @Tags Games
+// @Tags Users
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
 // @Produce json
 // @Param id path string true "Review Id"
 // @Success 200 {object} map[string]boolean
-// @Router /reviews/{id} [delete]
+// @Router /users/games/reviews/{id} [delete]
 func DeleteReview(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
+	//check authorization
+	cUser, _ := models.GetCurrentUser(c)
+	if cUser.Role != "user" {
+		c.JSON(http.StatusBadRequest, gin.H{"forbidden": "Allowed role: user"})
+		return
+	}
 
 	var review models.Review
 	if err := db.Where("id = ?", c.Param("id")).First(&review).Error; err != nil {
@@ -148,9 +159,8 @@ func DeleteReview(c *gin.Context) {
 		return
 	}
 
-	// check if current user is the same user who create this review
-	usr, _ := models.GetCurrentUser(c)
-	if review.UserID != int(usr.ID) {
+	// check if current user is owner of this review
+	if review.UserID != int(cUser.ID) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "You don't have permission to delete this review"})
 		return
 	}

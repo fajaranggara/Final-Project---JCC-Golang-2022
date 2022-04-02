@@ -35,7 +35,7 @@ func GetAllGenre(c *gin.Context) {
 // Get Games by Genre godoc
 // @Summary Get list of games in specific genre
 // @Description Get all games of spesific genre by id
-// @Tags Find Games By
+// @Tags Public
 // @Produce json
 // @Param id path string true "Genre Id"
 // @Success 200 {object} []models.Game
@@ -62,25 +62,23 @@ func GetGamesByGenreId(c *gin.Context) {
 // @Security BearerToken
 // @Produce json
 // @Success 200 {object} models.Genre
-// @Router /genres [post]
+// @Router /admin/add-genres [post]
 func CreateGenre(c *gin.Context) {
+	db := c.MustGet("db").(*gorm.DB)
 	//check authorization
 	cUser, _ := models.GetCurrentUser(c)
 	if cUser.Role != "admin" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Only for admin level user"})
+		c.JSON(http.StatusBadRequest, gin.H{"forbidden": "Allowed role: admin"})
         return
 	}
 
 	var input GenreInput
-
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	genre := models.Genre{Name: input.Name}
-	// get db from gin context
-	db := c.MustGet("db").(*gorm.DB)
 
 	db.Create(&genre)
 	c.JSON(http.StatusOK, gin.H{"data": genre})
@@ -96,16 +94,16 @@ func CreateGenre(c *gin.Context) {
 // @Param id path string true "Genre Id"
 // @Param Body body GenreInput true "the body to create new genre"
 // @Success 200 {object} models.Genre
-// @Router /genres/{id} [patch]
+// @Router /admin/genres/{id} [patch]
 func UpdateGenre(c *gin.Context) {
+	db := c.MustGet("db").(*gorm.DB)
 	//check authorization
 	cUser, _ := models.GetCurrentUser(c)
 	if cUser.Role != "admin" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Only for admin level user"})
+		c.JSON(http.StatusBadRequest, gin.H{"forbidden": "Allowed role: admin"})
         return
 	}
 
-	db := c.MustGet("db").(*gorm.DB)
 	var genre models.Genre
 	if err := db.Where("id = ?", c.Param("id")).First(&genre).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record Not Found"})
@@ -137,17 +135,16 @@ func UpdateGenre(c *gin.Context) {
 // @Produce json
 // @Param id path string true "Genre Id"
 // @Success 200 {object} map[string]boolean
-// @Router /genres/{id} [delete]
+// @Router /admin/genres/{id} [delete]
 func DeleteGenre(c *gin.Context) {
+	db := c.MustGet("db").(*gorm.DB)
 	//check authorization
 	cUser, _ := models.GetCurrentUser(c)
 	if cUser.Role != "admin" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Only for admin level user"})
+		c.JSON(http.StatusBadRequest, gin.H{"forbidden": "Allowed role: admin"})
         return
 	}
 	
-	db := c.MustGet("db").(*gorm.DB)
-
 	var genre models.Genre
 	if err := db.Where("id = ?", c.Param("id")).First(&genre).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record Not Found"})

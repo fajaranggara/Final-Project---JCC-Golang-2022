@@ -36,7 +36,7 @@ func GetAllCategory(c *gin.Context) {
 // Get Games by Category godoc
 // @Summary Get list of games in specific category
 // @Description Get all games of spesific category by id
-// @Tags Find Games By
+// @Tags Public
 // @Produce json
 // @Param id path string true "Category Id"
 // @Success 200 {object} []models.Game
@@ -63,25 +63,23 @@ func GetGamesByCategoryId(c *gin.Context) {
 // @Security BearerToken
 // @Produce json
 // @Success 200 {object} models.Category
-// @Router /categories [post]
+// @Router /admin/add-categories [post]
 func CreateCategory(c *gin.Context) {
+	db := c.MustGet("db").(*gorm.DB)
 	//check authorization
 	cUser, _ := models.GetCurrentUser(c)
 	if cUser.Role != "admin" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Only for admin level user"})
+		c.JSON(http.StatusBadRequest, gin.H{"forbidden": "Allowed role: admin"})
         return
 	}
 
 	var input CategoryInput
-
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	category := models.Category{Name: input.Name, Description: input.Description}
-	// get db from gin context
-	db := c.MustGet("db").(*gorm.DB)
 
 	db.Create(&category)
 	c.JSON(http.StatusOK, gin.H{"data": category})
@@ -97,16 +95,16 @@ func CreateCategory(c *gin.Context) {
 // @Param id path string true "Category Id"
 // @Param Body body CategoryInput true "the body to create new category"
 // @Success 200 {object} models.Category
-// @Router /categories/{id} [patch]
+// @Router /admin/categories/{id} [patch]
 func UpdateCategory(c *gin.Context) {
+	db := c.MustGet("db").(*gorm.DB)
 	//check authorization
 	cUser, _ := models.GetCurrentUser(c)
 	if cUser.Role != "admin" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Only for admin level user"})
+		c.JSON(http.StatusBadRequest, gin.H{"forbidden": "Allowed role: admin"})
         return
 	}
 
-	db := c.MustGet("db").(*gorm.DB)
 	var category models.Category
 	if err := db.Where("id = ?", c.Param("id")).First(&category).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record Not Found"})
@@ -139,16 +137,15 @@ func UpdateCategory(c *gin.Context) {
 // @Produce json
 // @Param id path string true "Category Id"
 // @Success 200 {object} map[string]boolean
-// @Router /categories/{id} [delete]
+// @Router /admin/categories/{id} [delete]
 func DeleteCategory(c *gin.Context) {
+	db := c.MustGet("db").(*gorm.DB)
 	//check authorization
 	cUser, _ := models.GetCurrentUser(c)
 	if cUser.Role != "admin" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Only for admin level user"})
+		c.JSON(http.StatusBadRequest, gin.H{"forbidden": "Allowed role: admin"})
         return
 	}
-	
-	db := c.MustGet("db").(*gorm.DB)
 
 	var category models.Category
 	if err := db.Where("id = ?", c.Param("id")).First(&category).Error; err != nil {

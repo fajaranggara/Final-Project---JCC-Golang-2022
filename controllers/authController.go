@@ -20,15 +20,10 @@ type RegisterInput struct {
 	Email    string `json:"email" binding:"required"`
 }
 
-type ChangePasswordInput struct {
-    CurrentPassword string `json:"current_password" binding:"required"`
-    NewPassword string `json:"new_password" binding:"required"`
-}
-
 // LoginUser godoc
 // @Summary Login as an user.
 // @Description Logging in to get jwt token to access admin or user api by roles.
-// @Tags Auth
+// @Tags Authentication & Authorization
 // @Param Body body LoginInput true "the body to login a user"
 // @Produce json
 // @Success 200 {object} map[string]interface{}
@@ -64,8 +59,8 @@ func Login(c *gin.Context){
 
 // Register godoc
 // @Summary Register a user.
-// @Description registering a user from public access.
-// @Tags Auth
+// @Description Registering a user, role: user.
+// @Tags Authentication & Authorization
 // @Param Body body RegisterInput true "the body to register a user"
 // @Produce json
 // @Success 200 {object} map[string]interface{}

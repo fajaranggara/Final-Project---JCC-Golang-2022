@@ -74,14 +74,13 @@ func GetGameById(c *gin.Context) {
 // @Security BearerToken
 // @Produce json
 // @Success 200 {object} models.Game
-// @Router /games [post]
+// @Router /publisher/add-games [post]
 func CreateGame(c *gin.Context) {
-	// get db from gin context
 	db := c.MustGet("db").(*gorm.DB)
 	//check authorization
 	cUser, _ := models.GetCurrentUser(c)
 	if cUser.Role != "publisher" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Only for publisher level user"})
+		c.JSON(http.StatusBadRequest, gin.H{"forbidden": "Allowed role: publisher"})
         return
 	}
 
@@ -122,13 +121,13 @@ func CreateGame(c *gin.Context) {
 // @Param id path string true "Game Id"
 // @Param Body body UpdateGameInput true "the body to create new game"
 // @Success 200 {object} models.Game
-// @Router /games/{id} [patch]
+// @Router /publisher/games/{id} [patch]
 func UpdateGame(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 	//check authorization
 	cUser, _ := models.GetCurrentUser(c)
 	if cUser.Role != "publisher" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Only for publisher level user"})
+		c.JSON(http.StatusBadRequest, gin.H{"forbidden": "Allowed role: publisher"})
         return
 	}
 
@@ -138,14 +137,14 @@ func UpdateGame(c *gin.Context) {
 		return
 	}
 
+	// check if current user is publisher of this games
 	uidPublisher, err := getUserIdByPublisherId(game.PublisherID, db)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	// check if current user is the same user who create this review
 	if uidPublisher != int(cUser.ID) {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "You don't have permission to edit this review"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "You don't have permission to edit this games"})
 		return
 	}
 
@@ -178,31 +177,30 @@ func UpdateGame(c *gin.Context) {
 // @Produce json
 // @Param id path string true "Game Id"
 // @Success 200 {object} map[string]boolean
-// @Router /games/{id} [delete]
+// @Router /publisher/games/{id} [delete]
 func DeleteGame(c *gin.Context) {
+	db := c.MustGet("db").(*gorm.DB)
 	//check authorization
 	cUser, _ := models.GetCurrentUser(c)
 	if cUser.Role != "publisher" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Only for publisher level user"})
+		c.JSON(http.StatusBadRequest, gin.H{"forbidden": "Allowed role: publisher"})
         return
 	}
 	
-	db := c.MustGet("db").(*gorm.DB)
-
 	var game models.Game
 	if err := db.Where("id = ?", c.Param("id")).First(&game).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record Not Found"})
 		return
 	}
 
+	// check if current user is publisher of this games
 	uidPublisher, err := getUserIdByPublisherId(game.PublisherID, db)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	// check if current user is the same user who create this review
 	if uidPublisher != int(cUser.ID) {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "You don't have permission to edit this review"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "You don't have permission to delete this games"})
 		return
 	}
 

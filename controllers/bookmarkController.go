@@ -18,10 +18,11 @@ import (
 // @Success 200 {object} []models.Bookmark
 // @Router /users/bookmarks [get]
 func ShowUserBookmark(c *gin.Context) {
+	//check authorization
 	cUser, _ := models.GetCurrentUser(c)
 	if cUser.Role != "user" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "You need to login"})
-        return
+		c.JSON(http.StatusBadRequest, gin.H{"forbidden": "Allowed role: user"})
+		return
 	}
 
 	db := c.MustGet("db").(*gorm.DB)
@@ -38,7 +39,7 @@ func ShowUserBookmark(c *gin.Context) {
 // Bookmark godoc
 // @Summary Bookmarked games
 // @Description User add games to bookmark
-// @Tags Games
+// @Tags Users
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
 // @Produce json
@@ -47,10 +48,10 @@ func ShowUserBookmark(c *gin.Context) {
 // @Router /games/{id}/add-to-bookmark [patch]
 func AddGameToBookmark(c *gin.Context) {
 	//check authorization
-	cUser, err := models.GetCurrentUser(c)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "You need to login"})
-        return
+	cUser, _ := models.GetCurrentUser(c)
+	if cUser.Role != "user" {
+		c.JSON(http.StatusBadRequest, gin.H{"forbidden": "Allowed role: user"})
+		return
 	}
 
 	db := c.MustGet("db").(*gorm.DB)
@@ -84,20 +85,28 @@ func AddGameToBookmark(c *gin.Context) {
 // @Success 200 {object} map[string]boolean
 // @Router /users/bookmarks/{id} [delete]
 func DeleteBookmarkedGame(c *gin.Context) {
+	//check authorization
+	cUser, _ := models.GetCurrentUser(c)
+	if cUser.Role != "user" {
+		c.JSON(http.StatusBadRequest, gin.H{"forbidden": "Allowed role: user"})
+		return
+	}
+	
+	// get bookmarks info
 	db := c.MustGet("db").(*gorm.DB)
-
 	var bookmark models.Bookmark
 	if err := db.Where("id = ?", c.Param("id")).First(&bookmark).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record Not Found"})
 		return
 	}
 
-	// check if current user is the same user who create this review
-	usr, _ := models.GetCurrentUser(c)
-	if bookmark.UserID != int(usr.ID) {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "You don't have permission to delete this review"})
+	// check if current user is owner of this bookmark
+	if bookmark.UserID != int(cUser.ID) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "You don't have permission to delete this bookmark"})
 		return
 	}
+
+	
 
 	db.Delete(&bookmark)
 
