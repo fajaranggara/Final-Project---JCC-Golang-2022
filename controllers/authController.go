@@ -82,7 +82,6 @@ func Login(c *gin.Context){
 
     user := map[string]string{
         "username": usr.Username,
-        "email":    usr.Email,
     }
 
     c.JSON(http.StatusOK, gin.H{"message": "login success", "user": user, "token": token})
