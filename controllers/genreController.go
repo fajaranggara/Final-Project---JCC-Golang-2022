@@ -16,7 +16,7 @@ type GenreInput struct {
 // Get All Genre godoc
 // @Summary Get all genre
 // @Description Get list of genre
-// @Tags Genre
+// @Tags Public
 // @Produce json
 // @Success 200 {object} []models.Genre
 // @Router /genres [get]
@@ -32,32 +32,10 @@ func GetAllGenre(c *gin.Context) {
 
 }
 
-// Get Genre by ID godoc
-// @Summary Get genre by id
-// @Description Get one genre by id
-// @Tags Genre
-// @Produce json
-// @Param id path string true "Genre Id"
-// @Success 200 {object} models.Genre
-// @Router /genres/{id} [get]
-func GetGenreById(c *gin.Context) {
-	// get db from gin context
-	db := c.MustGet("db").(*gorm.DB)
-
-	// check if exist and get data
-	var genre models.Genre
-	if err := db.Where("id = ?", c.Param("id")).First(&genre).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Record Not Found"})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"data": genre})
-}
-
 // Get Games by Genre godoc
-// @Summary Get games in a genre by id
+// @Summary Get list of games in specific genre
 // @Description Get all games of spesific genre by id
-// @Tags Games
+// @Tags Find Games By
 // @Produce json
 // @Param id path string true "Genre Id"
 // @Success 200 {object} []models.Game
@@ -78,7 +56,7 @@ func GetGamesByGenreId(c *gin.Context) {
 // Create Genre godoc
 // @Summary Create a new genre
 // @Description Only admin have permission to create genre
-// @Tags Genre
+// @Tags Admin
 // @Param Body body GenreInput true "the body to create new genre"
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
@@ -111,7 +89,7 @@ func CreateGenre(c *gin.Context) {
 // Update Genre godoc
 // @Summary Update existing genre by id
 // @Description Only admin have permission to update genre
-// @Tags Genre
+// @Tags Admin
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
 // @Produce json
@@ -153,7 +131,7 @@ func UpdateGenre(c *gin.Context) {
 // Delete a Genre godoc
 // @Summary Delete existing genre by id
 // @Description Only admin have permission to delete genre
-// @Tags Genre
+// @Tags Admin
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
 // @Produce json

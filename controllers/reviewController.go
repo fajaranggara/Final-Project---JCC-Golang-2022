@@ -20,12 +20,12 @@ type UpdateReviewInput struct {
 	Content		string    `json:"content"`
 }
 
-// Get Reviews from Game godoc
-// @Summary Get reviews of a game by gameID
-// @Description Get all reviews of spesific game
-// @Tags Game
+// Get Reviews from Games godoc
+// @Summary Get reviews of specific games
+// @Description Get all reviews of spesific games
+// @Tags Public
 // @Produce json
-// @Param id path string true "Game Id"
+// @Param id path string true "Games Id"
 // @Success 200 {object} []models.Review
 // @Router /games/{id}/reviews [get]
 func GetGamesReview(c *gin.Context) {
@@ -44,14 +44,14 @@ func GetGamesReview(c *gin.Context) {
 // Create Review godoc
 // @Summary Create a review
 // @Description Create new review
-// @Tags Review
+// @Tags Games
 // @Param Body body AddReviewInput true "the body to create new review"
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
 // @Produce json
-// @Param id path string true "Game Id"
+// @Param id path string true "Games Id"
 // @Success 200 {object} models.Review
-// @Router /games/:id/reviews [post]
+// @Router /games/:id/add-reviews [post]
 func AddReview(c *gin.Context) {
 	var input AddReviewInput
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -91,7 +91,7 @@ func AddReview(c *gin.Context) {
 // Update Review godoc
 // @Summary Update existing review by id
 // @Description Only user who create this review have permission to update
-// @Tags Review
+// @Tags Games
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
 // @Produce json
@@ -134,7 +134,7 @@ func UpdateReview(c *gin.Context) {
 // Delete Review godoc
 // @Summary Delete existing review by id
 // @Description Only user who create this review have permission to update
-// @Tags Review
+// @Tags Games
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
 // @Produce json

@@ -17,7 +17,7 @@ type PublisherInput struct {
 // Get All Publisher godoc
 // @Summary Get all publisher
 // @Description Get list of publisher
-// @Tags Publisher
+// @Tags Public
 // @Produce json
 // @Success 200 {object} []models.Publisher
 // @Router /publishers [get]
@@ -32,32 +32,10 @@ func GetAllPublisher(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": publisher})
 }
 
-// Get Publisher by ID godoc
-// @Summary Get publisher by id
-// @Description Get one publisher by id
-// @Tags Publisher
-// @Produce json
-// @Param id path string true "Publisher Id"
-// @Success 200 {object} models.Publisher
-// @Router /publishers/{id} [get]
-func GetPublisherById(c *gin.Context) {
-	// get db from gin context
-	db := c.MustGet("db").(*gorm.DB)
-
-	// check if exist and get data
-	var publisher models.Publisher
-	if err := db.Where("id = ?", c.Param("id")).First(&publisher).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Record Not Found"})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"data": publisher})
-}
-
 // Get Games by Publisher godoc
-// @Summary Get games in a publisher by id
+// @Summary Get list of games in specific publisher
 // @Description Get all games of spesific publisher by id
-// @Tags Games
+// @Tags Find Games By
 // @Produce json
 // @Param id path string true "Publisher Id"
 // @Success 200 {object} []models.Game
@@ -78,7 +56,7 @@ func GetGamesByPublisherId(c *gin.Context) {
 // Create Publisher godoc
 // @Summary Create a new publisher
 // @Description Only admin have permission to create publisher
-// @Tags Publisher
+// @Tags Admin
 // @Param Body body PublisherInput true "the body to create new publisher"
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
@@ -111,7 +89,7 @@ func CreatePublisher(c *gin.Context) {
 // Update Publisher godoc
 // @Summary Update existing publisher by id
 // @Description Only admin have permission to update publisher
-// @Tags Publisher
+// @Tags Admin
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
 // @Produce json
@@ -153,7 +131,7 @@ func UpdatePublisher(c *gin.Context) {
 // Delete a Publisher godoc
 // @Summary Delete existing publisher by id
 // @Description Only admin have permission to delete publisher
-// @Tags Publisher
+// @Tags Admin
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
 // @Produce json

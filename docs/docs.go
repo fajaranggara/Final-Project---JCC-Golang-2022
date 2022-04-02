@@ -32,7 +32,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Category"
+                    "Public"
                 ],
                 "summary": "Get all category",
                 "responses": {
@@ -58,7 +58,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Category"
+                    "Admin"
                 ],
                 "summary": "Create a new category",
                 "parameters": [
@@ -90,33 +90,6 @@ const docTemplate = `{
             }
         },
         "/categories/{id}": {
-            "get": {
-                "description": "Get one category by id",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Category"
-                ],
-                "summary": "Get category by id",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Category Id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.Category"
-                        }
-                    }
-                }
-            },
             "delete": {
                 "security": [
                     {
@@ -128,7 +101,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Category"
+                    "Admin"
                 ],
                 "summary": "Delete existing category by id",
                 "parameters": [
@@ -170,7 +143,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Category"
+                    "Admin"
                 ],
                 "summary": "Update existing category by id",
                 "parameters": [
@@ -215,9 +188,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Games"
+                    "Find Games By"
                 ],
-                "summary": "Get games in a category by id",
+                "summary": "Get list of games in specific category",
                 "parameters": [
                     {
                         "type": "string",
@@ -247,7 +220,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Game"
+                    "Public"
                 ],
                 "summary": "Get all Game",
                 "responses": {
@@ -273,7 +246,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Game"
+                    "Admin"
                 ],
                 "summary": "Create a new game",
                 "parameters": [
@@ -304,7 +277,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/games/:id/reviews": {
+        "/games/:id/add-reviews": {
             "post": {
                 "security": [
                     {
@@ -316,12 +289,62 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Review"
+                    "Games"
                 ],
                 "summary": "Create a review",
                 "parameters": [
                     {
                         "description": "the body to create new review",
+                        "name": "Body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.AddReviewInput"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Authorization. How to input in swagger : 'Bearer \u003cinsert_your_token_here\u003e'",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Games Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Review"
+                        }
+                    }
+                }
+            }
+        },
+        "/games/:id/add-to-bookmark": {
+            "patch": {
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ],
+                "description": "User add games to bookmark",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Games"
+                ],
+                "summary": "Bookmarked games",
+                "parameters": [
+                    {
+                        "description": "the body to add games into bookmark",
                         "name": "Body",
                         "in": "body",
                         "required": true,
@@ -348,7 +371,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Review"
+                            "$ref": "#/definitions/models.Bookmark"
                         }
                     }
                 }
@@ -361,7 +384,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Game"
+                    "Public"
                 ],
                 "summary": "Get Game by id",
                 "parameters": [
@@ -393,7 +416,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Game"
+                    "Admin"
                 ],
                 "summary": "Delete existing game by id",
                 "parameters": [
@@ -435,7 +458,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Game"
+                    "Admin"
                 ],
                 "summary": "Update existing game by id",
                 "parameters": [
@@ -475,18 +498,18 @@ const docTemplate = `{
         },
         "/games/{id}/reviews": {
             "get": {
-                "description": "Get all reviews of spesific game",
+                "description": "Get all reviews of spesific games",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Game"
+                    "Public"
                 ],
-                "summary": "Get reviews of a game by gameID",
+                "summary": "Get reviews of specific games",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Game Id",
+                        "description": "Games Id",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -512,7 +535,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Genre"
+                    "Public"
                 ],
                 "summary": "Get all genre",
                 "responses": {
@@ -538,7 +561,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Genre"
+                    "Admin"
                 ],
                 "summary": "Create a new genre",
                 "parameters": [
@@ -570,33 +593,6 @@ const docTemplate = `{
             }
         },
         "/genres/{id}": {
-            "get": {
-                "description": "Get one genre by id",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Genre"
-                ],
-                "summary": "Get genre by id",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Genre Id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.Genre"
-                        }
-                    }
-                }
-            },
             "delete": {
                 "security": [
                     {
@@ -608,7 +604,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Genre"
+                    "Admin"
                 ],
                 "summary": "Delete existing genre by id",
                 "parameters": [
@@ -650,7 +646,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Genre"
+                    "Admin"
                 ],
                 "summary": "Update existing genre by id",
                 "parameters": [
@@ -695,9 +691,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Games"
+                    "Find Games By"
                 ],
-                "summary": "Get games in a genre by id",
+                "summary": "Get list of games in specific genre",
                 "parameters": [
                     {
                         "type": "string",
@@ -759,7 +755,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Publisher"
+                    "Public"
                 ],
                 "summary": "Get all publisher",
                 "responses": {
@@ -785,7 +781,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Publisher"
+                    "Admin"
                 ],
                 "summary": "Create a new publisher",
                 "parameters": [
@@ -817,33 +813,6 @@ const docTemplate = `{
             }
         },
         "/publishers/{id}": {
-            "get": {
-                "description": "Get one publisher by id",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Publisher"
-                ],
-                "summary": "Get publisher by id",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Publisher Id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.Publisher"
-                        }
-                    }
-                }
-            },
             "delete": {
                 "security": [
                     {
@@ -855,7 +824,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Publisher"
+                    "Admin"
                 ],
                 "summary": "Delete existing publisher by id",
                 "parameters": [
@@ -897,7 +866,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Publisher"
+                    "Admin"
                 ],
                 "summary": "Update existing publisher by id",
                 "parameters": [
@@ -942,9 +911,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Games"
+                    "Find Games By"
                 ],
-                "summary": "Get games in a publisher by id",
+                "summary": "Get list of games in specific publisher",
                 "parameters": [
                     {
                         "type": "string",
@@ -1011,7 +980,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Review"
+                    "Games"
                 ],
                 "summary": "Delete existing review by id",
                 "parameters": [
@@ -1053,7 +1022,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Review"
+                    "Games"
                 ],
                 "summary": "Update existing review by id",
                 "parameters": [
@@ -1091,6 +1060,87 @@ const docTemplate = `{
                 }
             }
         },
+        "/users/bookmarks": {
+            "get": {
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ],
+                "description": "Get all games in users bookmark",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get list of bookmarked games",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authorization. How to input in swagger : 'Bearer \u003cinsert_your_token_here\u003e'",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Bookmark"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/bookmarks/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ],
+                "description": "Only user who have permission can delete this bookmark",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Delete games in users bookmark",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authorization. How to input in swagger : 'Bearer \u003cinsert_your_token_here\u003e'",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bookmark Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "boolean"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/users/change-password": {
             "patch": {
                 "security": [
@@ -1103,7 +1153,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Users"
                 ],
                 "summary": "Change users password.",
                 "parameters": [
@@ -1135,7 +1185,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/users/profile": {
+        "/users/profiles": {
             "get": {
                 "security": [
                     {
@@ -1147,7 +1197,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Users"
                 ],
                 "summary": "Get info of current login user",
                 "parameters": [
@@ -1298,6 +1348,35 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "rate": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.Bookmark": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "game_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "id_game": {
+                    "type": "integer"
+                },
+                "image_url": {
+                    "type": "string"
+                },
+                "ratings": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_id": {
                     "type": "integer"
                 }
             }

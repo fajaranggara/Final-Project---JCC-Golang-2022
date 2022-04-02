@@ -14,12 +14,12 @@ import (
 // Get User Profile godoc
 // @Summary Get info of current login user
 // @Description Get logged in user info
-// @Tags User
+// @Tags Users
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
 // @Produce json
 // @Success 200 {object} map[string]interface{}
-// @Router /users/profile [get]
+// @Router /users/profiles [get]
 func GetUserProfile(c *gin.Context){
 	// get current user
 	usr, err := models.GetCurrentUser(c)
@@ -131,7 +131,7 @@ func Register(c *gin.Context) {
 // Change password godoc
 // @Summary Change users password.
 // @Description renew users password.
-// @Tags User
+// @Tags Users
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
 // @Produce json

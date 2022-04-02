@@ -23,7 +23,7 @@ type GameInput struct {
 // Get all Game godoc
 // @Summary Get all Game
 // @Description Get list of Game
-// @Tags Game
+// @Tags Public
 // @Produce json
 // @Success 200 {object} []models.Game
 // @Router /games [get]
@@ -41,7 +41,7 @@ func GetAllGame(c *gin.Context) {
 // Get Game by ID godoc
 // @Summary Get Game by id
 // @Description Get one game by id
-// @Tags Game
+// @Tags Public
 // @Produce json
 // @Param id path string true "Game Id"
 // @Success 200 {object} models.Game
@@ -63,7 +63,7 @@ func GetGameById(c *gin.Context) {
 // Create Game godoc
 // @Summary Create a new game
 // @Description Only admin have permission to create publisher
-// @Tags Game
+// @Tags Admin
 // @Param Body body GameInput true "the body to create new game"
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
@@ -103,7 +103,7 @@ func CreateGame(c *gin.Context) {
 // Update Game godoc
 // @Summary Update existing game by id
 // @Description Only admin have permission to update game
-// @Tags Game
+// @Tags Admin
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
 // @Produce json
@@ -151,7 +151,7 @@ func UpdateGame(c *gin.Context) {
 // Delete a Game godoc
 // @Summary Delete existing game by id
 // @Description Only admin have permission to delete game
-// @Tags Game
+// @Tags Admin
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
 // @Produce json

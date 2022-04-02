@@ -17,7 +17,7 @@ type CategoryInput struct {
 // Get All Category godoc
 // @Summary Get all category
 // @Description Get list of category
-// @Tags Category
+// @Tags Public
 // @Produce json
 // @Success 200 {object} []models.Category
 // @Router /categories [get]
@@ -33,32 +33,10 @@ func GetAllCategory(c *gin.Context) {
 
 }
 
-// Get Category by ID godoc
-// @Summary Get category by id
-// @Description Get one category by id
-// @Tags Category
-// @Produce json
-// @Param id path string true "Category Id"
-// @Success 200 {object} models.Category
-// @Router /categories/{id} [get]
-func GetCategoryById(c *gin.Context) {
-	// get db from gin context
-	db := c.MustGet("db").(*gorm.DB)
-
-	// check if exist and get data
-	var category models.Category
-	if err := db.Where("id = ?", c.Param("id")).First(&category).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Record Not Found"})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"data": category})
-}
-
 // Get Games by Category godoc
-// @Summary Get games in a category by id
+// @Summary Get list of games in specific category
 // @Description Get all games of spesific category by id
-// @Tags Games
+// @Tags Find Games By
 // @Produce json
 // @Param id path string true "Category Id"
 // @Success 200 {object} []models.Game
@@ -79,7 +57,7 @@ func GetGamesByCategoryId(c *gin.Context) {
 // Create Category godoc
 // @Summary Create a new category
 // @Description Only admin have permission to create category
-// @Tags Category
+// @Tags Admin
 // @Param Body body CategoryInput true "the body to create new category"
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
@@ -112,7 +90,7 @@ func CreateCategory(c *gin.Context) {
 // Update Category godoc
 // @Summary Update existing category by id
 // @Description Only admin have permission to update category
-// @Tags Category
+// @Tags Admin
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
 // @Produce json
@@ -155,7 +133,7 @@ func UpdateCategory(c *gin.Context) {
 // Delete a Category godoc
 // @Summary Delete existing category by id
 // @Description Only admin have permission to delete category
-// @Tags Category
+// @Tags Admin
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
 // @Produce json

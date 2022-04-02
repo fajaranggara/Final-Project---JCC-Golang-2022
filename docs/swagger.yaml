@@ -84,6 +84,25 @@ definitions:
       rate:
         type: integer
     type: object
+  models.Bookmark:
+    properties:
+      created_at:
+        type: string
+      game_name:
+        type: string
+      id:
+        type: integer
+      id_game:
+        type: integer
+      image_url:
+        type: string
+      ratings:
+        type: integer
+      updated_at:
+        type: string
+      user_id:
+        type: integer
+    type: object
   models.Category:
     properties:
       created_at:
@@ -189,7 +208,7 @@ paths:
             type: array
       summary: Get all category
       tags:
-      - Category
+      - Public
     post:
       description: Only admin have permission to create category
       parameters:
@@ -215,7 +234,7 @@ paths:
       - BearerToken: []
       summary: Create a new category
       tags:
-      - Category
+      - Admin
   /categories/{id}:
     delete:
       description: Only admin have permission to delete category
@@ -243,25 +262,7 @@ paths:
       - BearerToken: []
       summary: Delete existing category by id
       tags:
-      - Category
-    get:
-      description: Get one category by id
-      parameters:
-      - description: Category Id
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.Category'
-      summary: Get category by id
-      tags:
-      - Category
+      - Admin
     patch:
       description: Only admin have permission to update category
       parameters:
@@ -292,7 +293,7 @@ paths:
       - BearerToken: []
       summary: Update existing category by id
       tags:
-      - Category
+      - Admin
   /categories/{id}/games:
     get:
       description: Get all games of spesific category by id
@@ -311,9 +312,9 @@ paths:
             items:
               $ref: '#/definitions/models.Game'
             type: array
-      summary: Get games in a category by id
+      summary: Get list of games in specific category
       tags:
-      - Games
+      - Find Games By
   /games:
     get:
       description: Get list of Game
@@ -328,7 +329,7 @@ paths:
             type: array
       summary: Get all Game
       tags:
-      - Game
+      - Public
     post:
       description: Only admin have permission to create publisher
       parameters:
@@ -354,12 +355,44 @@ paths:
       - BearerToken: []
       summary: Create a new game
       tags:
-      - Game
-  /games/:id/reviews:
+      - Admin
+  /games/:id/add-reviews:
     post:
       description: Create new review
       parameters:
       - description: the body to create new review
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.AddReviewInput'
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Games Id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Review'
+      security:
+      - BearerToken: []
+      summary: Create a review
+      tags:
+      - Games
+  /games/:id/add-to-bookmark:
+    patch:
+      description: User add games to bookmark
+      parameters:
+      - description: the body to add games into bookmark
         in: body
         name: Body
         required: true
@@ -381,12 +414,12 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Review'
+            $ref: '#/definitions/models.Bookmark'
       security:
       - BearerToken: []
-      summary: Create a review
+      summary: Bookmarked games
       tags:
-      - Review
+      - Games
   /games/{id}:
     delete:
       description: Only admin have permission to delete game
@@ -414,7 +447,7 @@ paths:
       - BearerToken: []
       summary: Delete existing game by id
       tags:
-      - Game
+      - Admin
     get:
       description: Get one game by id
       parameters:
@@ -432,7 +465,7 @@ paths:
             $ref: '#/definitions/models.Game'
       summary: Get Game by id
       tags:
-      - Game
+      - Public
     patch:
       description: Only admin have permission to update game
       parameters:
@@ -463,12 +496,12 @@ paths:
       - BearerToken: []
       summary: Update existing game by id
       tags:
-      - Game
+      - Admin
   /games/{id}/reviews:
     get:
-      description: Get all reviews of spesific game
+      description: Get all reviews of spesific games
       parameters:
-      - description: Game Id
+      - description: Games Id
         in: path
         name: id
         required: true
@@ -482,9 +515,9 @@ paths:
             items:
               $ref: '#/definitions/models.Review'
             type: array
-      summary: Get reviews of a game by gameID
+      summary: Get reviews of specific games
       tags:
-      - Game
+      - Public
   /genres:
     get:
       description: Get list of genre
@@ -499,7 +532,7 @@ paths:
             type: array
       summary: Get all genre
       tags:
-      - Genre
+      - Public
     post:
       description: Only admin have permission to create genre
       parameters:
@@ -525,7 +558,7 @@ paths:
       - BearerToken: []
       summary: Create a new genre
       tags:
-      - Genre
+      - Admin
   /genres/{id}:
     delete:
       description: Only admin have permission to delete genre
@@ -553,25 +586,7 @@ paths:
       - BearerToken: []
       summary: Delete existing genre by id
       tags:
-      - Genre
-    get:
-      description: Get one genre by id
-      parameters:
-      - description: Genre Id
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.Genre'
-      summary: Get genre by id
-      tags:
-      - Genre
+      - Admin
     patch:
       description: Only admin have permission to update genre
       parameters:
@@ -602,7 +617,7 @@ paths:
       - BearerToken: []
       summary: Update existing genre by id
       tags:
-      - Genre
+      - Admin
   /genres/{id}/games:
     get:
       description: Get all games of spesific genre by id
@@ -621,9 +636,9 @@ paths:
             items:
               $ref: '#/definitions/models.Game'
             type: array
-      summary: Get games in a genre by id
+      summary: Get list of games in specific genre
       tags:
-      - Games
+      - Find Games By
   /login:
     post:
       description: Logging in to get jwt token to access admin or user api by roles.
@@ -659,7 +674,7 @@ paths:
             type: array
       summary: Get all publisher
       tags:
-      - Publisher
+      - Public
     post:
       description: Only admin have permission to create publisher
       parameters:
@@ -685,7 +700,7 @@ paths:
       - BearerToken: []
       summary: Create a new publisher
       tags:
-      - Publisher
+      - Admin
   /publishers/{id}:
     delete:
       description: Only admin have permission to delete publisher
@@ -713,25 +728,7 @@ paths:
       - BearerToken: []
       summary: Delete existing publisher by id
       tags:
-      - Publisher
-    get:
-      description: Get one publisher by id
-      parameters:
-      - description: Publisher Id
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.Publisher'
-      summary: Get publisher by id
-      tags:
-      - Publisher
+      - Admin
     patch:
       description: Only admin have permission to update publisher
       parameters:
@@ -762,7 +759,7 @@ paths:
       - BearerToken: []
       summary: Update existing publisher by id
       tags:
-      - Publisher
+      - Admin
   /publishers/{id}/games:
     get:
       description: Get all games of spesific publisher by id
@@ -781,9 +778,9 @@ paths:
             items:
               $ref: '#/definitions/models.Game'
             type: array
-      summary: Get games in a publisher by id
+      summary: Get list of games in specific publisher
       tags:
-      - Games
+      - Find Games By
   /register:
     post:
       description: registering a user from public access.
@@ -832,7 +829,7 @@ paths:
       - BearerToken: []
       summary: Delete existing review by id
       tags:
-      - Review
+      - Games
     patch:
       description: Only user who create this review have permission to update
       parameters:
@@ -863,7 +860,58 @@ paths:
       - BearerToken: []
       summary: Update existing review by id
       tags:
-      - Review
+      - Games
+  /users/bookmarks:
+    get:
+      description: Get all games in users bookmark
+      parameters:
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Bookmark'
+            type: array
+      security:
+      - BearerToken: []
+      summary: Get list of bookmarked games
+      tags:
+      - Users
+  /users/bookmarks/{id}:
+    delete:
+      description: Only user who have permission can delete this bookmark
+      parameters:
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Bookmark Id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: boolean
+            type: object
+      security:
+      - BearerToken: []
+      summary: Delete games in users bookmark
+      tags:
+      - Users
   /users/change-password:
     patch:
       description: renew users password.
@@ -891,8 +939,8 @@ paths:
       - BearerToken: []
       summary: Change users password.
       tags:
-      - User
-  /users/profile:
+      - Users
+  /users/profiles:
     get:
       description: Get logged in user info
       parameters:
@@ -913,5 +961,5 @@ paths:
       - BearerToken: []
       summary: Get info of current login user
       tags:
-      - User
+      - Users
 swagger: "2.0"
