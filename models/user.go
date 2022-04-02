@@ -23,24 +23,9 @@ type User struct {
 	Review	  []Review	`json:"-"`
 }
 
-func GetUserByID(uid uint, db *gorm.DB) (User,error) {
-
-	var usr User
-
-	if err := db.Model(User{}).First(&usr,uid).Error; err != nil {
-		return usr ,errors.New("User not found!")
-	}
-	
-	usr.HidePassword()
-	
-	return usr ,nil
-
-}
-
 func (usr *User) HidePassword(){
 	usr.Password = "*****"
 }
-
 
 func GetCurrentUser(c *gin.Context) (User, error) {
     db := c.MustGet("db").(*gorm.DB)

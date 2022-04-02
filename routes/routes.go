@@ -44,10 +44,11 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 
 	// USER LEVEL: can access by user with role{"user", "admin"}
 	{
-		r.PATCH("/users/:id/change-password", controllers.ChangePassword, middlewares.JwtAuthMiddleware())
-	
-		r.POST("/:id/reviews", controllers.AddReview, middlewares.JwtAuthMiddleware())
+		r.PATCH("/users/change-password", controllers.ChangePassword, middlewares.JwtAuthMiddleware())
+		r.GET("/users/profile", controllers.GetUserProfile, middlewares.JwtAuthMiddleware())
 
+		r.POST("/:id/reviews", controllers.AddReview, middlewares.JwtAuthMiddleware())
+		
 		reviewMiddleware := r.Group("/reviews")
 		reviewMiddleware.Use(middlewares.JwtAuthMiddleware())
 		// Can access by user who create this review
