@@ -13,7 +13,7 @@ import (
 
 var API_SECRET = utils.GetEnv("API_SECRET", "topsecret")
 
-func GenerateToken(user_id uint) (string, error) {
+func GenerateToken(user_id uint, user_role string) (string, error) {
 	token_hour_lifespan, err := strconv.Atoi(utils.GetEnv("TOKEN_HOUR", "1"))
 
 	if err != nil {
@@ -23,6 +23,7 @@ func GenerateToken(user_id uint) (string, error) {
 	claims := jwt.MapClaims{}
 	claims["authorized"] = true
 	claims["user_id"]= user_id
+	claims["role"]= user_role
 	claims["exp"] = time.Now().Add(time.Hour * time.Duration(token_hour_lifespan)).Unix()
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 

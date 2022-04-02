@@ -13,9 +13,9 @@ type GenreInput struct {
 	Name        string `json:"name"`
 }
 
-// Get all Genre godoc
-// @Summary Get all Genre
-// @Description Get list of Genre
+// Get All Genre godoc
+// @Summary Get all genre
+// @Description Get list of genre
 // @Tags Genre
 // @Produce json
 // @Success 200 {object} []models.Genre
@@ -24,43 +24,17 @@ func GetAllGenre(c *gin.Context) {
 	// get db from gin context
 	db := c.MustGet("db").(*gorm.DB)
 
-	var genres []models.Genre
+	var genre []models.Genre
 
-	db.Find(&genres)
+	db.Find(&genre)
 
-	c.JSON(http.StatusOK, gin.H{"data": genres})
-
-}
-
-// Create Genre godoc
-// @Summary Create a Genre
-// @Description Create new Genre
-// @Tags Genre
-// @Param Body body GenreInput true "the body to create new genre"
-// @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
-// @Security BearerToken
-// @Produce json
-// @Success 200 {object} models.Genre
-// @Router /genres [post]
-func CreateGenre(c *gin.Context) {
-	var input GenreInput
-
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	genre := models.Genre{Name: input.Name}
-	// get db from gin context
-	db := c.MustGet("db").(*gorm.DB)
-
-	db.Create(&genre)
 	c.JSON(http.StatusOK, gin.H{"data": genre})
+
 }
 
-// Get Genre godoc
-// @Summary Get Genre by id
-// @Description Get one Genre by id
+// Get Genre by ID godoc
+// @Summary Get genre by id
+// @Description Get one genre by id
 // @Tags Genre
 // @Produce json
 // @Param id path string true "Genre Id"
@@ -80,10 +54,10 @@ func GetGenreById(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": genre})
 }
 
-// Get games from one Genre godoc
-// @Summary Get games by Genre by id
-// @Description Get all games of spesific Genre by id
-// @Tags Genre
+// Get Games by Genre godoc
+// @Summary Get games in a genre by id
+// @Description Get all games of spesific genre by id
+// @Tags Games
 // @Produce json
 // @Param id path string true "Genre Id"
 // @Success 200 {object} []models.Game
@@ -99,12 +73,44 @@ func GetGamesByGenreId(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"data": games})
+}
 
+// Create Genre godoc
+// @Summary Create a new genre
+// @Description Only admin have permission to create genre
+// @Tags Genre
+// @Param Body body GenreInput true "the body to create new genre"
+// @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
+// @Security BearerToken
+// @Produce json
+// @Success 200 {object} models.Genre
+// @Router /genres [post]
+func CreateGenre(c *gin.Context) {
+	//check authorization
+	cUser, _ := models.GetCurrentUser(c)
+	if cUser.Role != "admin" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Only for admin level user"})
+        return
+	}
+
+	var input GenreInput
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	genre := models.Genre{Name: input.Name}
+	// get db from gin context
+	db := c.MustGet("db").(*gorm.DB)
+
+	db.Create(&genre)
+	c.JSON(http.StatusOK, gin.H{"data": genre})
 }
 
 // Update Genre godoc
-// @Summary update a Genre by id
-// @Description update one Genre by id
+// @Summary Update existing genre by id
+// @Description Only admin have permission to update genre
 // @Tags Genre
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
@@ -114,9 +120,14 @@ func GetGamesByGenreId(c *gin.Context) {
 // @Success 200 {object} models.Genre
 // @Router /genres/{id} [patch]
 func UpdateGenre(c *gin.Context) {
-	// get db from gin context
+	//check authorization
+	cUser, _ := models.GetCurrentUser(c)
+	if cUser.Role != "admin" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Only for admin level user"})
+        return
+	}
+
 	db := c.MustGet("db").(*gorm.DB)
-	// get rating if exist
 	var genre models.Genre
 	if err := db.Where("id = ?", c.Param("id")).First(&genre).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record Not Found"})
@@ -140,8 +151,8 @@ func UpdateGenre(c *gin.Context) {
 }
 
 // Delete a Genre godoc
-// @Summary delete a Genre by id
-// @Description delete one Genre by id
+// @Summary Delete existing genre by id
+// @Description Only admin have permission to delete genre
 // @Tags Genre
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
@@ -150,7 +161,13 @@ func UpdateGenre(c *gin.Context) {
 // @Success 200 {object} map[string]boolean
 // @Router /genres/{id} [delete]
 func DeleteGenre(c *gin.Context) {
-	// get db from gin context
+	//check authorization
+	cUser, _ := models.GetCurrentUser(c)
+	if cUser.Role != "admin" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Only for admin level user"})
+        return
+	}
+	
 	db := c.MustGet("db").(*gorm.DB)
 
 	var genre models.Genre

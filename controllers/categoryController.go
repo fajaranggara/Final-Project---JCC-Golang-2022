@@ -14,9 +14,9 @@ type CategoryInput struct {
 	Description string `json:"description"`
 }
 
-// Get all Category godoc
-// @Summary Get all Category
-// @Description Get list of Category
+// Get All Category godoc
+// @Summary Get all category
+// @Description Get list of category
 // @Tags Category
 // @Produce json
 // @Success 200 {object} []models.Category
@@ -33,35 +33,9 @@ func GetAllCategory(c *gin.Context) {
 
 }
 
-// Create Category godoc
-// @Summary Create a Category
-// @Description Create new Category
-// @Tags Category
-// @Param Body body CategoryInput true "the body to create new category"
-// @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
-// @Security BearerToken
-// @Produce json
-// @Success 200 {object} models.Category
-// @Router /categories [post]
-func CreateCategory(c *gin.Context) {
-	var input CategoryInput
-
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	category := models.Category{Name: input.Name, Description: input.Description}
-	// get db from gin context
-	db := c.MustGet("db").(*gorm.DB)
-
-	db.Create(&category)
-	c.JSON(http.StatusOK, gin.H{"data": category})
-}
-
-// Get Category godoc
-// @Summary Get Category by id
-// @Description Get one Category by id
+// Get Category by ID godoc
+// @Summary Get category by id
+// @Description Get one category by id
 // @Tags Category
 // @Produce json
 // @Param id path string true "Category Id"
@@ -81,10 +55,10 @@ func GetCategoryById(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": category})
 }
 
-// Get games from one Category godoc
-// @Summary Get games by Category by id
-// @Description Get all games of spesific Category by id
-// @Tags Category
+// Get Games by Category godoc
+// @Summary Get games in a category by id
+// @Description Get all games of spesific category by id
+// @Tags Games
 // @Produce json
 // @Param id path string true "Category Id"
 // @Success 200 {object} []models.Game
@@ -100,12 +74,44 @@ func GetGamesByCategoryId(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"data": games})
+}
 
+// Create Category godoc
+// @Summary Create a new category
+// @Description Only admin have permission to create category
+// @Tags Category
+// @Param Body body CategoryInput true "the body to create new category"
+// @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
+// @Security BearerToken
+// @Produce json
+// @Success 200 {object} models.Category
+// @Router /categories [post]
+func CreateCategory(c *gin.Context) {
+	//check authorization
+	cUser, _ := models.GetCurrentUser(c)
+	if cUser.Role != "admin" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Only for admin level user"})
+        return
+	}
+
+	var input CategoryInput
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	category := models.Category{Name: input.Name, Description: input.Description}
+	// get db from gin context
+	db := c.MustGet("db").(*gorm.DB)
+
+	db.Create(&category)
+	c.JSON(http.StatusOK, gin.H{"data": category})
 }
 
 // Update Category godoc
-// @Summary update a Category by id
-// @Description update one Category by id
+// @Summary Update existing category by id
+// @Description Only admin have permission to update category
 // @Tags Category
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
@@ -115,9 +121,14 @@ func GetGamesByCategoryId(c *gin.Context) {
 // @Success 200 {object} models.Category
 // @Router /categories/{id} [patch]
 func UpdateCategory(c *gin.Context) {
-	// get db from gin context
+	//check authorization
+	cUser, _ := models.GetCurrentUser(c)
+	if cUser.Role != "admin" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Only for admin level user"})
+        return
+	}
+
 	db := c.MustGet("db").(*gorm.DB)
-	// get rating if exist
 	var category models.Category
 	if err := db.Where("id = ?", c.Param("id")).First(&category).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record Not Found"})
@@ -142,8 +153,8 @@ func UpdateCategory(c *gin.Context) {
 }
 
 // Delete a Category godoc
-// @Summary delete a Category by id
-// @Description delete one Category by id
+// @Summary Delete existing category by id
+// @Description Only admin have permission to delete category
 // @Tags Category
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
@@ -152,7 +163,13 @@ func UpdateCategory(c *gin.Context) {
 // @Success 200 {object} map[string]boolean
 // @Router /categories/{id} [delete]
 func DeleteCategory(c *gin.Context) {
-	// get db from gin context
+	//check authorization
+	cUser, _ := models.GetCurrentUser(c)
+	if cUser.Role != "admin" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Only for admin level user"})
+        return
+	}
+	
 	db := c.MustGet("db").(*gorm.DB)
 
 	var category models.Category

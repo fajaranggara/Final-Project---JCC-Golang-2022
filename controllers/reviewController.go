@@ -20,9 +20,9 @@ type UpdateReviewInput struct {
 	Content		string    `json:"content"`
 }
 
-// Get reviews of a game godoc
-// @Summary Get games review by game id
-// @Description Get all reviews of spesific game by id
+// Get Reviews from Game godoc
+// @Summary Get reviews of a game by gameID
+// @Description Get all reviews of spesific game
 // @Tags Game
 // @Produce json
 // @Param id path string true "Game Id"
@@ -39,13 +39,11 @@ func GetGamesReview(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"data": reviews})
-
 }
 
-
 // Create Review godoc
-// @Summary Create a Review
-// @Description Create new Review
+// @Summary Create a review
+// @Description Create new review
 // @Tags Review
 // @Param Body body ReviewInput true "the body to create new review"
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
@@ -61,10 +59,16 @@ func AddReview(c *gin.Context) {
 		return
 	}
 
+	// get current user
+	usr, err := models.GetCurrentUser(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "You need to sign in to add review"})
+		return
+	}
+
 	gameId,_ := strconv.Atoi(c.Param("id"))
-	review := models.Review{Rate: input.Rate, Content: input.Content, GameID: gameId, UserID: input.UserID}
+	review := models.Review{Rate: input.Rate, Content: input.Content, GameID: gameId, UserID: int(usr.ID)}
 	
-	// get db from gin context
 	db := c.MustGet("db").(*gorm.DB)
 
 	var game models.Game
@@ -85,8 +89,8 @@ func AddReview(c *gin.Context) {
 }
 
 // Update Review godoc
-// @Summary update a Review by id
-// @Description update one Review by id
+// @Summary Update existing review by id
+// @Description Only user who create this review have permission to update
 // @Tags Review
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
@@ -95,18 +99,23 @@ func AddReview(c *gin.Context) {
 // @Param Body body ReviewInput true "the body to create new review"
 // @Success 200 {object} models.Review
 // @Router /reviews/{id} [patch]
-func UpdateReview(c *gin.Context) {
-	// get db from gin context
+func UpdateReview(c *gin.Context) {	
 	db := c.MustGet("db").(*gorm.DB)
-	// get rating if exist
+
 	var review models.Review
 	if err := db.Where("id = ?", c.Param("id")).First(&review).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record Not Found"})
 		return
 	}
 
-	var input UpdateReviewInput
+	// check if current user is the same user who create this review
+	usr, _ := models.GetCurrentUser(c)
+	if review.UserID != int(usr.ID) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "You don't have permission to edit this review"})
+		return
+	}
 
+	var input UpdateReviewInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -122,9 +131,9 @@ func UpdateReview(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": review})
 }
 
-// Delete a Review godoc
-// @Summary delete a Review by id
-// @Description delete one Review by id
+// Delete Review godoc
+// @Summary Delete existing review by id
+// @Description Only user who create this review have permission to update
 // @Tags Review
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
@@ -133,12 +142,18 @@ func UpdateReview(c *gin.Context) {
 // @Success 200 {object} map[string]boolean
 // @Router /reviews/{id} [delete]
 func DeleteReview(c *gin.Context) {
-	// get db from gin context
 	db := c.MustGet("db").(*gorm.DB)
 
 	var review models.Review
 	if err := db.Where("id = ?", c.Param("id")).First(&review).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record Not Found"})
+		return
+	}
+
+	// check if current user is the same user who create this review
+	usr, _ := models.GetCurrentUser(c)
+	if review.UserID != int(usr.ID) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "You don't have permission to delete this review"})
 		return
 	}
 

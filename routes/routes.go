@@ -19,67 +19,71 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 		c.Set("db", db)
 	})
 
-	r.POST("/login", controllers.Login)
-	r.POST("/register", controllers.Register)
-	r.PATCH("/users/:id/change-password", controllers.ChangePassword, middlewares.JwtAuthMiddleware())
+	// PUBLIC LEVEL: no login needed
+	{
+		r.POST("/login", controllers.Login)
+		r.POST("/register", controllers.Register) // default role is "user"
 
+		r.GET("/categories", controllers.GetAllCategory)
+		r.GET("/categories/:id", controllers.GetCategoryById)
+		r.GET("/categories/:id/games", controllers.GetGamesByCategoryId)
 
-	r.GET("/categories", controllers.GetAllCategory)
-	r.GET("/categories/:id", controllers.GetCategoryById)
-	r.GET("/categories/:id/games", controllers.GetGamesByCategoryId)
-	// middleware for category
-	categoryMiddleware := r.Group("/categories")
-	categoryMiddleware.Use(middlewares.JwtAuthMiddleware())
-	categoryMiddleware.POST("/", controllers.CreateCategory)
-	categoryMiddleware.PATCH("/:id", controllers.UpdateCategory)
-	categoryMiddleware.DELETE("/:id", controllers.DeleteCategory)
-	// end
+		r.GET("/genres", controllers.GetAllGenre)
+		r.GET("/genres/:id", controllers.GetGenreById)
+		r.GET("/genres/:id/games", controllers.GetGamesByGenreId)
 
+		r.GET("/publishers", controllers.GetAllPublisher)
+		r.GET("/publishers/:id", controllers.GetPublisherById)
+		r.GET("/publishers/:id/games", controllers.GetGamesByPublisherId)
 
-	r.GET("/genres", controllers.GetAllGenre)
-	r.GET("/genres/:id", controllers.GetGenreById)
-	r.GET("/genres/:id/games", controllers.GetGamesByGenreId)
-	// middleware for genre
-	genreMiddleware := r.Group("/genres")
-	genreMiddleware.Use(middlewares.JwtAuthMiddleware())
-	genreMiddleware.POST("/", controllers.CreateGenre)
-	genreMiddleware.PATCH("/:id", controllers.UpdateGenre)
-	genreMiddleware.DELETE("/:id", controllers.DeleteGenre)
-	// end
+		r.GET("/games", controllers.GetAllGame)
+		r.GET("/games/:id", controllers.GetGameById)
+		r.GET("/games/:id/reviews", controllers.GetGamesReview)
+		
+	}
 
+	// USER LEVEL: can access by user with role{"user", "admin"}
+	{
+		r.PATCH("/users/:id/change-password", controllers.ChangePassword, middlewares.JwtAuthMiddleware())
+	
+		r.POST("/:id/reviews", controllers.AddReview, middlewares.JwtAuthMiddleware())
 
-	r.GET("/publishers", controllers.GetAllPublisher)
-	r.GET("/publishers/:id", controllers.GetPublisherById)
-	r.GET("/publishers/:id/games", controllers.GetGamesByPublisherId)
-	// middleware for category
-	publisherMiddleware := r.Group("/publishers")
-	publisherMiddleware.Use(middlewares.JwtAuthMiddleware())
-	publisherMiddleware.POST("/", controllers.CreatePublisher)
-	publisherMiddleware.PATCH("/:id", controllers.UpdatePublisher)
-	publisherMiddleware.DELETE("/:id", controllers.DeletePublisher)
-	// end
+		reviewMiddleware := r.Group("/reviews")
+		reviewMiddleware.Use(middlewares.JwtAuthMiddleware())
+		// Can access by user who create this review
+		{
+			reviewMiddleware.PATCH("/:id", controllers.UpdateReview)
+			reviewMiddleware.DELETE("/:id", controllers.DeleteReview)
+		}
+		
+	}
+	
+	// ADMIN LEVEL: can access by user with role{"admin"}
+	{
+		categoryMiddleware := r.Group("/categories")
+		categoryMiddleware.Use(middlewares.JwtAuthMiddleware())
+		categoryMiddleware.POST("/", controllers.CreateCategory)
+		categoryMiddleware.PATCH("/:id", controllers.UpdateCategory)
+		categoryMiddleware.DELETE("/:id", controllers.DeleteCategory)
 
+		genreMiddleware := r.Group("/genres")
+		genreMiddleware.Use(middlewares.JwtAuthMiddleware())
+		genreMiddleware.POST("/", controllers.CreateGenre)
+		genreMiddleware.PATCH("/:id", controllers.UpdateGenre)
+		genreMiddleware.DELETE("/:id", controllers.DeleteGenre)
 
-	r.GET("/games", controllers.GetAllGame)
-	r.GET("/games/:id", controllers.GetGameById)
-	r.GET("/games/:id/reviews", controllers.GetGamesReview)
-	// middleware for game
-	gameMiddleware := r.Group("/games")
-	gameMiddleware.Use(middlewares.JwtAuthMiddleware())
-	gameMiddleware.POST("/", controllers.CreateGame)
-	gameMiddleware.PATCH("/:id", controllers.UpdateGame)
-	gameMiddleware.DELETE("/:id", controllers.DeleteGame)
-	gameMiddleware.POST("/:id/reviews", controllers.AddReview)
-	// end
+		publisherMiddleware := r.Group("/publishers")
+		publisherMiddleware.Use(middlewares.JwtAuthMiddleware())
+		publisherMiddleware.POST("/", controllers.CreatePublisher)
+		publisherMiddleware.PATCH("/:id", controllers.UpdatePublisher)
+		publisherMiddleware.DELETE("/:id", controllers.DeletePublisher)
 
-
-	//r.GET("/reviews", controllers.GetAllReview)
-	// middleware for game
-	reviewMiddleware := r.Group("/reviews")
-	reviewMiddleware.Use(middlewares.JwtAuthMiddleware())
-	reviewMiddleware.PATCH("/:id", controllers.UpdateReview)
-	reviewMiddleware.DELETE("/:id", controllers.DeleteReview)
-	// end
+		gameMiddleware := r.Group("/games")
+		gameMiddleware.Use(middlewares.JwtAuthMiddleware())
+		gameMiddleware.POST("/", controllers.CreateGame)
+		gameMiddleware.PATCH("/:id", controllers.UpdateGame)
+		gameMiddleware.DELETE("/:id", controllers.DeleteGame)
+	}
 
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

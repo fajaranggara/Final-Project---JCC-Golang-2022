@@ -36,12 +36,33 @@ func GetAllGame(c *gin.Context) {
 	db.Find(&games)
 
 	c.JSON(http.StatusOK, gin.H{"data": games})
+}
 
+// Get Game by ID godoc
+// @Summary Get Game by id
+// @Description Get one game by id
+// @Tags Game
+// @Produce json
+// @Param id path string true "Game Id"
+// @Success 200 {object} models.Game
+// @Router /games/{id} [get]
+func GetGameById(c *gin.Context) {
+	// get db from gin context
+	db := c.MustGet("db").(*gorm.DB)
+
+	// check if exist and get data
+	var game models.Game
+	if err := db.Where("id = ?", c.Param("id")).First(&game).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Record Not Found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": game})
 }
 
 // Create Game godoc
-// @Summary Create a Game
-// @Description Create new Game
+// @Summary Create a new game
+// @Description Only admin have permission to create publisher
 // @Tags Game
 // @Param Body body GameInput true "the body to create new game"
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
@@ -50,6 +71,13 @@ func GetAllGame(c *gin.Context) {
 // @Success 200 {object} models.Game
 // @Router /games [post]
 func CreateGame(c *gin.Context) {
+	//check authorization
+	cUser, _ := models.GetCurrentUser(c)
+	if cUser.Role != "admin" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Only for admin level user"})
+        return
+	}
+
 	var input GameInput
 
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -72,31 +100,9 @@ func CreateGame(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": game})
 }
 
-// Get Game godoc
-// @Summary Get Game by id
-// @Description Get one Game by id
-// @Tags Game
-// @Produce json
-// @Param id path string true "Game Id"
-// @Success 200 {object} models.Game
-// @Router /games/{id} [get]
-func GetGameById(c *gin.Context) {
-	// get db from gin context
-	db := c.MustGet("db").(*gorm.DB)
-
-	// check if exist and get data
-	var game models.Game
-	if err := db.Where("id = ?", c.Param("id")).First(&game).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Record Not Found"})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"data": game})
-}
-
 // Update Game godoc
-// @Summary update a Game by id
-// @Description update one Game by id
+// @Summary Update existing game by id
+// @Description Only admin have permission to update game
 // @Tags Game
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
@@ -106,9 +112,14 @@ func GetGameById(c *gin.Context) {
 // @Success 200 {object} models.Game
 // @Router /games/{id} [patch]
 func UpdateGame(c *gin.Context) {
-	// get db from gin context
+	//check authorization
+	cUser, _ := models.GetCurrentUser(c)
+	if cUser.Role != "admin" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Only for admin level user"})
+        return
+	}
+
 	db := c.MustGet("db").(*gorm.DB)
-	// get rating if exist
 	var game models.Game
 	if err := db.Where("id = ?", c.Param("id")).First(&game).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record Not Found"})
@@ -138,8 +149,8 @@ func UpdateGame(c *gin.Context) {
 }
 
 // Delete a Game godoc
-// @Summary delete a Game by id
-// @Description delete one Game by id
+// @Summary Delete existing game by id
+// @Description Only admin have permission to delete game
 // @Tags Game
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
@@ -148,7 +159,13 @@ func UpdateGame(c *gin.Context) {
 // @Success 200 {object} map[string]boolean
 // @Router /games/{id} [delete]
 func DeleteGame(c *gin.Context) {
-	// get db from gin context
+	//check authorization
+	cUser, _ := models.GetCurrentUser(c)
+	if cUser.Role != "admin" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Only for admin level user"})
+        return
+	}
+	
 	db := c.MustGet("db").(*gorm.DB)
 
 	var game models.Game
@@ -161,6 +178,7 @@ func DeleteGame(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"data": true})
 }
+
 
 func CalculateRating(game *models.Game, newRate int) int {
 	counter := game.RatingsCounter + 1

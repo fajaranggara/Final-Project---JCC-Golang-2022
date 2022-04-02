@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"final-project/models"
+	"final-project/utils/token"
 	"fmt"
 	"net/http"
 	"time"
@@ -10,6 +11,26 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
+
+func CurrentUser(c *gin.Context){
+    db := c.MustGet("db").(*gorm.DB)
+	user_id, err := token.ExtractTokenID(c)
+	
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	
+	u,err := models.GetUserByID(user_id, db)
+	
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message":"success","data":u})
+}
+
 
 type LoginInput struct {
 	Username string `json:"username" binding:"required"`
@@ -86,6 +107,7 @@ func Register(c *gin.Context) {
     usr.Username = input.Username
     usr.Email = input.Email
     usr.Password = input.Password
+    usr.Role = "user"
 
     _, err := usr.SaveUser(db)
 
