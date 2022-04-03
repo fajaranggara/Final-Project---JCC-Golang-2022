@@ -483,58 +483,6 @@ paths:
       summary: Get Game by id
       tags:
       - Public
-  /games/{id}/add-to-bookmark:
-    patch:
-      description: User add games to bookmark
-      parameters:
-      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Game Id
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.Bookmark'
-      security:
-      - BearerToken: []
-      summary: Bookmarked games
-      tags:
-      - Users
-  /games/{id}/install:
-    patch:
-      description: User installing games
-      parameters:
-      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Game Id
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.InstalledGames'
-      security:
-      - BearerToken: []
-      summary: Install a games
-      tags:
-      - Users
   /games/{id}/reviews:
     get:
       description: Get all reviews of spesific games
@@ -915,6 +863,58 @@ paths:
       security:
       - BearerToken: []
       summary: Create a review
+      tags:
+      - Users
+  /users/games/{id}/add-to-bookmark:
+    patch:
+      description: User add games to bookmark
+      parameters:
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Game Id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Bookmark'
+      security:
+      - BearerToken: []
+      summary: Bookmarked games
+      tags:
+      - Users
+  /users/games/{id}/install:
+    patch:
+      description: User installing games
+      parameters:
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Game Id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.InstalledGames'
+      security:
+      - BearerToken: []
+      summary: Install a games
       tags:
       - Users
   /users/games/reviews/{id}:
