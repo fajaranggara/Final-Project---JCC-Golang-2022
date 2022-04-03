@@ -163,9 +163,9 @@ func RegisAdmin(c *gin.Context) {
 
 	// update current user role
 	updatedUser := models.User{}
-	updatedUser.Role = "publisher"
+	updatedUser.Role = "admin"
 	updatedUser.UpdatedAt = time.Now()
 	db.Model(&cUser).Updates(updatedUser)
 
-	c.JSON(http.StatusOK, gin.H{"message": "You're now a publisher"})
+	c.JSON(http.StatusOK, gin.H{"message": "You're now an admin"})
 }
