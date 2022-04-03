@@ -76,7 +76,7 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 		admin.PATCH("/categories/:id", controllers.UpdateCategory)
 		admin.DELETE("/categories/:id", controllers.DeleteCategory)
 		
-		admin.POST("/add-genre", controllers.CreateGenre)
+		admin.POST("/add-genres", controllers.CreateGenre)
 		admin.PATCH("/genres/:id", controllers.UpdateGenre)
 		admin.DELETE("/genres/:id", controllers.DeleteGenre)
 	}
