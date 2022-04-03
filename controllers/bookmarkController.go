@@ -45,7 +45,7 @@ func ShowUserBookmark(c *gin.Context) {
 // @Produce json
 // @Param id path string true "Game Id"
 // @Success 200 {object} models.Bookmark
-// @Router /games/{id}/add-to-bookmark [patch]
+// @Router /users/games/{id}/add-to-bookmark [patch]
 func AddGameToBookmark(c *gin.Context) {
 	//check authorization
 	cUser, _ := models.GetCurrentUser(c)

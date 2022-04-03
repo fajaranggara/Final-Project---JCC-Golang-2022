@@ -45,7 +45,7 @@ func ShowInstalledGames(c *gin.Context) {
 // @Produce json
 // @Param id path string true "Game Id"
 // @Success 200 {object} models.InstalledGames
-// @Router /games/{id}/install [patch]
+// @Router /users/games/{id}/install [patch]
 func InstallThisGames(c *gin.Context) {
 	//check authorization
 	cUser, _ := models.GetCurrentUser(c)
