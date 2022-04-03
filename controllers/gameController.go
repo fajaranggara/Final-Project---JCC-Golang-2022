@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"final-project/models"
-	"math"
 	"net/http"
 	"time"
 
@@ -26,8 +25,8 @@ type UpdateGameInput struct {
 }
 
 // Get all Game godoc
-// @Summary Get all Game
-// @Description Get list of Game
+// @Summary Show all game
+// @Description Get list of game
 // @Tags Public
 // @Produce json
 // @Success 200 {object} []models.Game
@@ -44,8 +43,8 @@ func GetAllGame(c *gin.Context) {
 }
 
 // Get Game by ID godoc
-// @Summary Get Game by id
-// @Description Get one game by id
+// @Summary Show specific game by id
+// @Description Get one game
 // @Tags Public
 // @Produce json
 // @Param id path string true "Game Id"
@@ -66,8 +65,8 @@ func GetGameById(c *gin.Context) {
 }
 
 // Create Games godoc
-// @Summary Create a new games
-// @Description Only publisher and admin have permission to create games
+// @Summary Publish a new game
+// @Description Only publisher have permission to publish a games
 // @Tags Publisher
 // @Param Body body AddGameInput true "the body to create new games"
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
@@ -112,8 +111,8 @@ func CreateGame(c *gin.Context) {
 }
 
 // Update Game godoc
-// @Summary Update existing game by id
-// @Description Only admin have permission to update game
+// @Summary Update published game by id
+// @Description Only publisher have permission to update this game
 // @Tags Publisher
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
@@ -169,8 +168,8 @@ func UpdateGame(c *gin.Context) {
 }
 
 // Delete a Game godoc
-// @Summary Delete existing game by id
-// @Description Only admin have permission to delete game
+// @Summary Delete published game by id
+// @Description Only publisher have permission to delete this game
 // @Tags Publisher
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
@@ -209,13 +208,6 @@ func DeleteGame(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": "Delete game success"})
 }
 
-
-func CalculateRating(game *models.Game, newRate int) int {
-	counter := game.RatingsCounter + 1
-
-	rating := ((float64(game.Ratings) * float64(game.RatingsCounter)) + float64(newRate)) / float64(counter)
-	return int(math.Round(rating))
-}
 
 func getUserIdByPublisherId(publisherId int, db *gorm.DB) (int, error) {
 	var publisher models.Publisher

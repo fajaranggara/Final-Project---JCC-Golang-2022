@@ -14,7 +14,7 @@ type GenreInput struct {
 }
 
 // Get All Genre godoc
-// @Summary Get all genre
+// @Summary Show all genre tags
 // @Description Get list of genre
 // @Tags Public
 // @Produce json
@@ -33,8 +33,8 @@ func GetAllGenre(c *gin.Context) {
 }
 
 // Get Games by Genre godoc
-// @Summary Get list of games in specific genre
-// @Description Get all games of spesific genre by id
+// @Summary Show list of game in specific genre by genre_id
+// @Description Get all games of spesific genre
 // @Tags Public
 // @Produce json
 // @Param id path string true "Genre Id"
@@ -54,7 +54,7 @@ func GetGamesByGenreId(c *gin.Context) {
 }
 
 // Create Genre godoc
-// @Summary Create a new genre
+// @Summary Add a new genre
 // @Description Only admin have permission to create genre
 // @Tags Admin
 // @Param Body body GenreInput true "the body to create new genre"

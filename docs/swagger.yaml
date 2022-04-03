@@ -237,7 +237,7 @@ paths:
             $ref: '#/definitions/models.Category'
       security:
       - BearerToken: []
-      summary: Create a new category
+      summary: Add a new category
       tags:
       - Admin
   /admin/add-genres:
@@ -264,7 +264,7 @@ paths:
             $ref: '#/definitions/models.Genre'
       security:
       - BearerToken: []
-      summary: Create a new genre
+      summary: Add a new genre
       tags:
       - Admin
   /admin/categories/{id}:
@@ -387,7 +387,7 @@ paths:
       - Admin
   /categories:
     get:
-      description: Get list of category
+      description: Get list of category tags
       produces:
       - application/json
       responses:
@@ -397,12 +397,12 @@ paths:
             items:
               $ref: '#/definitions/models.Category'
             type: array
-      summary: Get all category
+      summary: Show all category tags
       tags:
       - Public
   /categories/{id}/games:
     get:
-      description: Get all games of spesific category by id
+      description: Get all games in spesific category
       parameters:
       - description: Category Id
         in: path
@@ -418,12 +418,12 @@ paths:
             items:
               $ref: '#/definitions/models.Game'
             type: array
-      summary: Get list of games in specific category
+      summary: Show list of games in specific category by category_id
       tags:
       - Public
   /change-password:
     patch:
-      description: Renew users password.
+      description: Used by User, Publisher, or Admin for change password account.
       parameters:
       - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
         in: header
@@ -446,12 +446,12 @@ paths:
             type: object
       security:
       - BearerToken: []
-      summary: Change users password.
+      summary: Change password account.
       tags:
       - Authentication & Authorization
   /games:
     get:
-      description: Get list of Game
+      description: Get list of game
       produces:
       - application/json
       responses:
@@ -461,12 +461,12 @@ paths:
             items:
               $ref: '#/definitions/models.Game'
             type: array
-      summary: Get all Game
+      summary: Show all game
       tags:
       - Public
   /games/{id}:
     get:
-      description: Get one game by id
+      description: Get one game
       parameters:
       - description: Game Id
         in: path
@@ -480,12 +480,12 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/models.Game'
-      summary: Get Game by id
+      summary: Show specific game by id
       tags:
       - Public
   /games/{id}/bookmark:
     post:
-      description: User add games to bookmark
+      description: Only current login user can access this bookmark
       parameters:
       - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
         in: header
@@ -506,7 +506,7 @@ paths:
             $ref: '#/definitions/models.Bookmark'
       security:
       - BearerToken: []
-      summary: Bookmark a games
+      summary: Add this game into bookmark
       tags:
       - Games
   /games/{id}/review:
@@ -538,7 +538,7 @@ paths:
             $ref: '#/definitions/models.Review'
       security:
       - BearerToken: []
-      summary: Create a review
+      summary: Add review into this game
       tags:
       - Games
   /games/{id}/reviews:
@@ -559,7 +559,7 @@ paths:
             items:
               $ref: '#/definitions/models.Review'
             type: array
-      summary: Get reviews of specific games
+      summary: Show all review of specific games by game_id
       tags:
       - Public
   /genres:
@@ -574,12 +574,12 @@ paths:
             items:
               $ref: '#/definitions/models.Genre'
             type: array
-      summary: Get all genre
+      summary: Show all genre tags
       tags:
       - Public
   /genres/{id}/games:
     get:
-      description: Get all games of spesific genre by id
+      description: Get all games of spesific genre
       parameters:
       - description: Genre Id
         in: path
@@ -595,7 +595,7 @@ paths:
             items:
               $ref: '#/definitions/models.Game'
             type: array
-      summary: Get list of games in specific genre
+      summary: Show list of game in specific genre by genre_id
       tags:
       - Public
   /login:
@@ -616,12 +616,12 @@ paths:
           schema:
             additionalProperties: true
             type: object
-      summary: Login as an user.
+      summary: Login for user, publisher, or admin.
       tags:
       - Authentication & Authorization
   /profiles:
     get:
-      description: Get logged in user info
+      description: Get user, publisher, or admin info
       parameters:
       - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
         in: header
@@ -638,12 +638,12 @@ paths:
             type: object
       security:
       - BearerToken: []
-      summary: Get info of current login user
+      summary: Get info of current login account
       tags:
       - Authentication & Authorization
   /publisher/add-games:
     post:
-      description: Only publisher and admin have permission to create games
+      description: Only publisher have permission to publish a games
       parameters:
       - description: the body to create new games
         in: body
@@ -665,12 +665,12 @@ paths:
             $ref: '#/definitions/models.Game'
       security:
       - BearerToken: []
-      summary: Create a new games
+      summary: Publish a new game
       tags:
       - Publisher
   /publisher/games/{id}:
     delete:
-      description: Only admin have permission to delete game
+      description: Only publisher have permission to delete this game
       parameters:
       - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
         in: header
@@ -693,11 +693,11 @@ paths:
             type: object
       security:
       - BearerToken: []
-      summary: Delete existing game by id
+      summary: Delete published game by id
       tags:
       - Publisher
     patch:
-      description: Only admin have permission to update game
+      description: Only publisher have permission to update this game
       parameters:
       - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
         in: header
@@ -724,7 +724,7 @@ paths:
             $ref: '#/definitions/models.Game'
       security:
       - BearerToken: []
-      summary: Update existing game by id
+      summary: Update published game by id
       tags:
       - Publisher
   /publishers:
@@ -739,7 +739,7 @@ paths:
             items:
               $ref: '#/definitions/models.Publisher'
             type: array
-      summary: Get all publisher
+      summary: Show all publisher
       tags:
       - Public
   /publishers/{id}/games:
@@ -760,12 +760,13 @@ paths:
             items:
               $ref: '#/definitions/models.Game'
             type: array
-      summary: Get list of games in specific publisher
+      summary: Show all game published by specific publisher
       tags:
       - Public
   /regist-admin:
     patch:
-      description: Become admin by upgrade your role.
+      description: Create an account before upgrade your role. (temporary) User or
+        Admin can change into this role
       parameters:
       - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
         in: header
@@ -793,7 +794,8 @@ paths:
       - Authentication & Authorization
   /regist-publisher:
     patch:
-      description: Become publisher by upgrade your role.
+      description: Create an account before upgrade your role. (temporary) User or
+        Admin can change into this role
       parameters:
       - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
         in: header
@@ -821,7 +823,7 @@ paths:
       - Authentication & Authorization
   /register:
     post:
-      description: 'Registering a user, role: user.'
+      description: 'Create account, role: user.'
       parameters:
       - description: the body to register a user
         in: body
@@ -837,12 +839,12 @@ paths:
           schema:
             additionalProperties: true
             type: object
-      summary: Register a user.
+      summary: Create an account.
       tags:
       - Authentication & Authorization
   /users/bookmarks:
     get:
-      description: Get all games in users bookmark
+      description: Get all games in current users bookmark
       parameters:
       - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
         in: header
@@ -860,7 +862,7 @@ paths:
             type: array
       security:
       - BearerToken: []
-      summary: Get list of bookmarked games
+      summary: Show listed games in bookmark
       tags:
       - Users
   /users/bookmarks/{id}:
@@ -888,7 +890,7 @@ paths:
             type: object
       security:
       - BearerToken: []
-      summary: Delete games in users bookmark
+      summary: Delete games from this users bookmark
       tags:
       - Users
   /users/games/{id}/install:
@@ -942,7 +944,7 @@ paths:
             type: object
       security:
       - BearerToken: []
-      summary: Delete existing review by id
+      summary: Delete review created by this user
       tags:
       - Users
     patch:
@@ -973,7 +975,7 @@ paths:
             $ref: '#/definitions/models.Review'
       security:
       - BearerToken: []
-      summary: Update existing review by id
+      summary: Update review created by this user
       tags:
       - Users
   /users/installed/{id}:
@@ -1024,7 +1026,7 @@ paths:
             type: array
       security:
       - BearerToken: []
-      summary: Get list of installed games
+      summary: Get list of installed games by this user
       tags:
       - Users
 swagger: "2.0"

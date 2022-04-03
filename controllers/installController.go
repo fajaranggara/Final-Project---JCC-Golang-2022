@@ -9,7 +9,7 @@ import (
 )
 
 // Get Installed Games from User godoc
-// @Summary Get list of installed games
+// @Summary Get list of installed games by this user
 // @Description Get all installed games by user
 // @Tags Users
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"

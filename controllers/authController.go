@@ -21,7 +21,7 @@ type RegisterInput struct {
 }
 
 // LoginUser godoc
-// @Summary Login as an user.
+// @Summary Login for user, publisher, or admin.
 // @Description Logging in to get jwt token to access admin or user api by roles.
 // @Tags Authentication & Authorization
 // @Param Body body LoginInput true "the body to login a user"
@@ -58,8 +58,8 @@ func Login(c *gin.Context){
 }
 
 // Register godoc
-// @Summary Register a user.
-// @Description Registering a user, role: user.
+// @Summary Create an account.
+// @Description Create account, role: user.
 // @Tags Authentication & Authorization
 // @Param Body body RegisterInput true "the body to register a user"
 // @Produce json

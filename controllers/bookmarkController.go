@@ -9,8 +9,8 @@ import (
 )
 
 // Get Bookmarked Games from User godoc
-// @Summary Get list of bookmarked games
-// @Description Get all games in users bookmark
+// @Summary Show listed games in bookmark
+// @Description Get all games in current users bookmark
 // @Tags Users
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
@@ -37,8 +37,8 @@ func ShowUserBookmark(c *gin.Context) {
 }
 
 // Bookmark godoc
-// @Summary Bookmark a games
-// @Description User add games to bookmark
+// @Summary Add this game into bookmark
+// @Description Only current login user can access this bookmark
 // @Tags Games
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
@@ -88,7 +88,7 @@ func AddGameToBookmark(c *gin.Context) {
 }
 
 // Delete Bookmark godoc
-// @Summary Delete games in users bookmark
+// @Summary Delete games from this users bookmark
 // @Description Only user who have permission can delete this bookmark
 // @Tags Users
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"

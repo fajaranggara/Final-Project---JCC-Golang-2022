@@ -9,7 +9,7 @@ import (
 )
 
 // Get All Publisher godoc
-// @Summary Get all publisher
+// @Summary Show all publisher
 // @Description Get list of publisher
 // @Tags Public
 // @Produce json
@@ -27,7 +27,7 @@ func GetAllPublisher(c *gin.Context) {
 }
 
 // Get Games by Publisher godoc
-// @Summary Get list of games in specific publisher
+// @Summary Show all game published by specific publisher
 // @Description Get all games of spesific publisher by id
 // @Tags Public
 // @Produce json

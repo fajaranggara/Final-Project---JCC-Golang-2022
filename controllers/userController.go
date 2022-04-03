@@ -21,8 +21,8 @@ type ChangePasswordInput struct {
 
 
 // Get User Profile godoc
-// @Summary Get info of current login user
-// @Description Get logged in user info
+// @Summary Get info of current login account
+// @Description Get user, publisher, or admin info
 // @Tags Authentication & Authorization
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
@@ -43,8 +43,8 @@ func GetUserProfile(c *gin.Context){
 }
 
 // Change password godoc
-// @Summary Change users password.
-// @Description Renew users password.
+// @Summary Change password account.
+// @Description Used by User, Publisher, or Admin for change password account.
 // @Tags Authentication & Authorization
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
@@ -93,7 +93,7 @@ func ChangePassword(c *gin.Context) {
 
 // Become Publisher godoc
 // @Summary Change role to become publisher.
-// @Description Become publisher by upgrade your role.
+// @Description Create an account before upgrade your role. (temporary) User or Admin can change into this role
 // @Tags Authentication & Authorization
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
@@ -139,7 +139,7 @@ func RegisPublisher(c *gin.Context) {
 
 // Become Admin godoc
 // @Summary Change role to become admin.
-// @Description Become admin by upgrade your role.
+// @Description Create an account before upgrade your role. (temporary) User or Admin can change into this role
 // @Tags Authentication & Authorization
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken

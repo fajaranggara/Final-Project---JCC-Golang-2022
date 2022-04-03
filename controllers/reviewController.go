@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"final-project/models"
+	"math"
 	"net/http"
 	"strconv"
 	"time"
@@ -16,7 +17,7 @@ type ReviewInput struct {
 }
 
 // Get Reviews from Games godoc
-// @Summary Get reviews of specific games
+// @Summary Show all review of specific games by game_id
 // @Description Get all reviews of spesific games
 // @Tags Public
 // @Produce json
@@ -37,7 +38,7 @@ func GetGamesReview(c *gin.Context) {
 }
 
 // Create Review godoc
-// @Summary Create a review
+// @Summary Add review into this game
 // @Description Create new review and rate(1-5)
 // @Tags Games
 // @Param Body body ReviewInput true "the body to create new review"
@@ -82,7 +83,7 @@ func AddReview(c *gin.Context) {
 		return
 	}
 	var updateGameRating models.Game
-	updateGameRating.Ratings = CalculateRating(&game, int(input.Rate))
+	updateGameRating.Ratings = calculateRating(&game, int(input.Rate))
 	updateGameRating.RatingsCounter = game.RatingsCounter + 1
 	updateGameRating.UpdatedAt = time.Now()
 
@@ -92,7 +93,7 @@ func AddReview(c *gin.Context) {
 }
 
 // Update Review godoc
-// @Summary Update existing review by id
+// @Summary Update review created by this user
 // @Description Only user who create this review have permission to update
 // @Tags Users
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
@@ -128,19 +129,39 @@ func UpdateReview(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	if input.Rate > 5 || input.Rate < 1 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Rate must in range 1 - 5"})
+		return
+	}
 
+	// update review
 	var updatedInputReview models.Review
-
 	updatedInputReview.Rate = int(input.Rate)
 	updatedInputReview.Content = input.Content
 	updatedInputReview.UpdatedAt = time.Now()
 
+	// update games rate
+	var game models.Game
+	if err := db.Where("id = ?", review.GameID).First(&game).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Record Not Found"})
+		return
+	}
+	var updateGame models.Game
+	oldRate := review.Rate
+	rate := game.Ratings * game.RatingsCounter
+	rate = rate - oldRate
+	newRate := math.Round((float64(rate) + float64(input.Rate)) / float64(game.RatingsCounter))
+	updateGame.Ratings = int(newRate)
+
+
 	db.Model(&review).Updates(updatedInputReview)
+	db.Model(&game).Updates(updateGame)
+
 	c.JSON(http.StatusOK, gin.H{"data": review})
 }
 
 // Delete Review godoc
-// @Summary Delete existing review by id
+// @Summary Delete review created by this user
 // @Description Only user who create this review have permission to update
 // @Tags Users
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
@@ -173,4 +194,12 @@ func DeleteReview(c *gin.Context) {
 	db.Delete(&review)
 
 	c.JSON(http.StatusOK, gin.H{"data": "Delete review success"})
+}
+
+
+func calculateRating(game *models.Game, newRate int) int {
+	counter := game.RatingsCounter + 1
+
+	rating := ((float64(game.Ratings) * float64(game.RatingsCounter)) + float64(newRate)) / float64(counter)
+	return int(math.Round(rating))
 }

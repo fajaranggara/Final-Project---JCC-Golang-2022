@@ -39,7 +39,7 @@ const docTemplate = `{
                 "tags": [
                     "Admin"
                 ],
-                "summary": "Create a new category",
+                "summary": "Add a new category",
                 "parameters": [
                     {
                         "description": "the body to create new category",
@@ -82,7 +82,7 @@ const docTemplate = `{
                 "tags": [
                     "Admin"
                 ],
-                "summary": "Create a new genre",
+                "summary": "Add a new genre",
                 "parameters": [
                     {
                         "description": "the body to create new genre",
@@ -297,14 +297,14 @@ const docTemplate = `{
         },
         "/categories": {
             "get": {
-                "description": "Get list of category",
+                "description": "Get list of category tags",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Public"
                 ],
-                "summary": "Get all category",
+                "summary": "Show all category tags",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -320,14 +320,14 @@ const docTemplate = `{
         },
         "/categories/{id}/games": {
             "get": {
-                "description": "Get all games of spesific category by id",
+                "description": "Get all games in spesific category",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Public"
                 ],
-                "summary": "Get list of games in specific category",
+                "summary": "Show list of games in specific category by category_id",
                 "parameters": [
                     {
                         "type": "string",
@@ -357,14 +357,14 @@ const docTemplate = `{
                         "BearerToken": []
                     }
                 ],
-                "description": "Renew users password.",
+                "description": "Used by User, Publisher, or Admin for change password account.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Authentication \u0026 Authorization"
                 ],
-                "summary": "Change users password.",
+                "summary": "Change password account.",
                 "parameters": [
                     {
                         "type": "string",
@@ -396,14 +396,14 @@ const docTemplate = `{
         },
         "/games": {
             "get": {
-                "description": "Get list of Game",
+                "description": "Get list of game",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Public"
                 ],
-                "summary": "Get all Game",
+                "summary": "Show all game",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -419,14 +419,14 @@ const docTemplate = `{
         },
         "/games/{id}": {
             "get": {
-                "description": "Get one game by id",
+                "description": "Get one game",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Public"
                 ],
-                "summary": "Get Game by id",
+                "summary": "Show specific game by id",
                 "parameters": [
                     {
                         "type": "string",
@@ -453,14 +453,14 @@ const docTemplate = `{
                         "BearerToken": []
                     }
                 ],
-                "description": "User add games to bookmark",
+                "description": "Only current login user can access this bookmark",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Games"
                 ],
-                "summary": "Bookmark a games",
+                "summary": "Add this game into bookmark",
                 "parameters": [
                     {
                         "type": "string",
@@ -501,7 +501,7 @@ const docTemplate = `{
                 "tags": [
                     "Games"
                 ],
-                "summary": "Create a review",
+                "summary": "Add review into this game",
                 "parameters": [
                     {
                         "description": "the body to create new review",
@@ -546,7 +546,7 @@ const docTemplate = `{
                 "tags": [
                     "Public"
                 ],
-                "summary": "Get reviews of specific games",
+                "summary": "Show all review of specific games by game_id",
                 "parameters": [
                     {
                         "type": "string",
@@ -578,7 +578,7 @@ const docTemplate = `{
                 "tags": [
                     "Public"
                 ],
-                "summary": "Get all genre",
+                "summary": "Show all genre tags",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -594,14 +594,14 @@ const docTemplate = `{
         },
         "/genres/{id}/games": {
             "get": {
-                "description": "Get all games of spesific genre by id",
+                "description": "Get all games of spesific genre",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Public"
                 ],
-                "summary": "Get list of games in specific genre",
+                "summary": "Show list of game in specific genre by genre_id",
                 "parameters": [
                     {
                         "type": "string",
@@ -633,7 +633,7 @@ const docTemplate = `{
                 "tags": [
                     "Authentication \u0026 Authorization"
                 ],
-                "summary": "Login as an user.",
+                "summary": "Login for user, publisher, or admin.",
                 "parameters": [
                     {
                         "description": "the body to login a user",
@@ -663,14 +663,14 @@ const docTemplate = `{
                         "BearerToken": []
                     }
                 ],
-                "description": "Get logged in user info",
+                "description": "Get user, publisher, or admin info",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Authentication \u0026 Authorization"
                 ],
-                "summary": "Get info of current login user",
+                "summary": "Get info of current login account",
                 "parameters": [
                     {
                         "type": "string",
@@ -698,14 +698,14 @@ const docTemplate = `{
                         "BearerToken": []
                     }
                 ],
-                "description": "Only publisher and admin have permission to create games",
+                "description": "Only publisher have permission to publish a games",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Publisher"
                 ],
-                "summary": "Create a new games",
+                "summary": "Publish a new game",
                 "parameters": [
                     {
                         "description": "the body to create new games",
@@ -741,14 +741,14 @@ const docTemplate = `{
                         "BearerToken": []
                     }
                 ],
-                "description": "Only admin have permission to delete game",
+                "description": "Only publisher have permission to delete this game",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Publisher"
                 ],
-                "summary": "Delete existing game by id",
+                "summary": "Delete published game by id",
                 "parameters": [
                     {
                         "type": "string",
@@ -783,14 +783,14 @@ const docTemplate = `{
                         "BearerToken": []
                     }
                 ],
-                "description": "Only admin have permission to update game",
+                "description": "Only publisher have permission to update this game",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Publisher"
                 ],
-                "summary": "Update existing game by id",
+                "summary": "Update published game by id",
                 "parameters": [
                     {
                         "type": "string",
@@ -835,7 +835,7 @@ const docTemplate = `{
                 "tags": [
                     "Public"
                 ],
-                "summary": "Get all publisher",
+                "summary": "Show all publisher",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -858,7 +858,7 @@ const docTemplate = `{
                 "tags": [
                     "Public"
                 ],
-                "summary": "Get list of games in specific publisher",
+                "summary": "Show all game published by specific publisher",
                 "parameters": [
                     {
                         "type": "string",
@@ -888,7 +888,7 @@ const docTemplate = `{
                         "BearerToken": []
                     }
                 ],
-                "description": "Become admin by upgrade your role.",
+                "description": "Create an account before upgrade your role. (temporary) User or Admin can change into this role",
                 "produces": [
                     "application/json"
                 ],
@@ -932,7 +932,7 @@ const docTemplate = `{
                         "BearerToken": []
                     }
                 ],
-                "description": "Become publisher by upgrade your role.",
+                "description": "Create an account before upgrade your role. (temporary) User or Admin can change into this role",
                 "produces": [
                     "application/json"
                 ],
@@ -971,14 +971,14 @@ const docTemplate = `{
         },
         "/register": {
             "post": {
-                "description": "Registering a user, role: user.",
+                "description": "Create account, role: user.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Authentication \u0026 Authorization"
                 ],
-                "summary": "Register a user.",
+                "summary": "Create an account.",
                 "parameters": [
                     {
                         "description": "the body to register a user",
@@ -1008,14 +1008,14 @@ const docTemplate = `{
                         "BearerToken": []
                     }
                 ],
-                "description": "Get all games in users bookmark",
+                "description": "Get all games in current users bookmark",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Users"
                 ],
-                "summary": "Get list of bookmarked games",
+                "summary": "Show listed games in bookmark",
                 "parameters": [
                     {
                         "type": "string",
@@ -1052,7 +1052,7 @@ const docTemplate = `{
                 "tags": [
                     "Users"
                 ],
-                "summary": "Delete games in users bookmark",
+                "summary": "Delete games from this users bookmark",
                 "parameters": [
                     {
                         "type": "string",
@@ -1096,7 +1096,7 @@ const docTemplate = `{
                 "tags": [
                     "Users"
                 ],
-                "summary": "Delete existing review by id",
+                "summary": "Delete review created by this user",
                 "parameters": [
                     {
                         "type": "string",
@@ -1138,7 +1138,7 @@ const docTemplate = `{
                 "tags": [
                     "Users"
                 ],
-                "summary": "Update existing review by id",
+                "summary": "Update review created by this user",
                 "parameters": [
                     {
                         "type": "string",
@@ -1273,7 +1273,7 @@ const docTemplate = `{
                 "tags": [
                     "Users"
                 ],
-                "summary": "Get list of installed games",
+                "summary": "Get list of installed games by this user",
                 "parameters": [
                     {
                         "type": "string",

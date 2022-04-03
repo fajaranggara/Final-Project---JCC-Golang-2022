@@ -15,8 +15,8 @@ type CategoryInput struct {
 }
 
 // Get All Category godoc
-// @Summary Get all category
-// @Description Get list of category
+// @Summary Show all category tags
+// @Description Get list of category tags
 // @Tags Public
 // @Produce json
 // @Success 200 {object} []models.Category
@@ -34,8 +34,8 @@ func GetAllCategory(c *gin.Context) {
 }
 
 // Get Games by Category godoc
-// @Summary Get list of games in specific category
-// @Description Get all games of spesific category by id
+// @Summary Show list of games in specific category by category_id
+// @Description Get all games in spesific category
 // @Tags Public
 // @Produce json
 // @Param id path string true "Category Id"
@@ -55,7 +55,7 @@ func GetGamesByCategoryId(c *gin.Context) {
 }
 
 // Create Category godoc
-// @Summary Create a new category
+// @Summary Add a new category
 // @Description Only admin have permission to create category
 // @Tags Admin
 // @Param Body body CategoryInput true "the body to create new category"
