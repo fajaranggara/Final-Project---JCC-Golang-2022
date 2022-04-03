@@ -70,7 +70,7 @@ func ChangePassword(c *gin.Context) {
     
     // check current password if true
     if err := models.VerifyPassword(input.CurrentPassword, usr.Password); err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "Wrong password"})
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Current password is wrong"})
 		return
     }
 

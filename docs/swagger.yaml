@@ -509,6 +509,32 @@ paths:
       summary: Add this game into bookmark
       tags:
       - Games
+  /games/{id}/install:
+    patch:
+      description: User installing games
+      parameters:
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Game Id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.InstalledGames'
+      security:
+      - BearerToken: []
+      summary: Install a games
+      tags:
+      - Games
   /games/{id}/review:
     post:
       description: Create new review and rate(1-5)
@@ -891,32 +917,6 @@ paths:
       security:
       - BearerToken: []
       summary: Delete games from this users bookmark
-      tags:
-      - Users
-  /users/games/{id}/install:
-    patch:
-      description: User installing games
-      parameters:
-      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Game Id
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.InstalledGames'
-      security:
-      - BearerToken: []
-      summary: Install a games
       tags:
       - Users
   /users/games/reviews/{id}:

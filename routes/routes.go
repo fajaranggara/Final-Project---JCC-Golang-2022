@@ -45,6 +45,7 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 	// game tags
 	game := r.Group("/games").Use(middlewares.JwtAuthMiddleware())
 	game.POST("/:id/bookmark", controllers.AddGameToBookmark)
+	game.PATCH("/:id/install", controllers.InstallThisGames)
 	game.POST("/:id/review", controllers.AddReview)
 
 	// USER LEVEL: can be access by user with role{"user"}
@@ -53,7 +54,6 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 		user.GET("/bookmarks", controllers.ShowUserBookmark)
 		user.DELETE("/bookmarks/:id", controllers.DeleteBookmarkedGame)
 
-		user.PATCH("/games/:id/install", controllers.InstallThisGames)
 		user.GET("/my-games", controllers.ShowInstalledGames)
 		user.DELETE("/installed/:id", controllers.UninstallGame)
 

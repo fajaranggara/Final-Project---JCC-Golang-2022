@@ -39,13 +39,13 @@ func ShowInstalledGames(c *gin.Context) {
 // Install godoc
 // @Summary Install a games
 // @Description User installing games
-// @Tags Users
+// @Tags Games
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
 // @Produce json
 // @Param id path string true "Game Id"
 // @Success 200 {object} models.InstalledGames
-// @Router /users/games/{id}/install [patch]
+// @Router /games/{id}/install [patch]
 func InstallThisGames(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 	//check authorization
