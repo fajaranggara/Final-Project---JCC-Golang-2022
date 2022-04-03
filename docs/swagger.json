@@ -876,14 +876,14 @@
                         "BearerToken": []
                     }
                 ],
-                "description": "Create an account before upgrade your role. (temporary) User or Admin can change into this role",
+                "description": "Create an account before chhange your role. User or Publisher can change into this role (temporary)",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Authentication \u0026 Authorization"
                 ],
-                "summary": "Change role to become admin.",
+                "summary": "Change role into admin.",
                 "parameters": [
                     {
                         "type": "string",
@@ -920,14 +920,14 @@
                         "BearerToken": []
                     }
                 ],
-                "description": "Create an account before upgrade your role. (temporary) User or Admin can change into this role",
+                "description": "Create an account before change your role into publisher. User or Admin can change into this role (temporary)",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Authentication \u0026 Authorization"
                 ],
-                "summary": "Change role to become publisher.",
+                "summary": "Change role into publisher.",
                 "parameters": [
                     {
                         "type": "string",
