@@ -45,7 +45,7 @@ func GetUserProfile(c *gin.Context){
 // Change password godoc
 // @Summary Change users password.
 // @Description Renew users password.
-// @Tags Users
+// @Tags Authentication & Authorization
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
 // @Produce json
@@ -130,7 +130,7 @@ func RegisPublisher(c *gin.Context) {
 	// create publisher
 	publisher := models.Publisher{
 		Name: cUser.Username,
-		ImageURL: input.LogoUrl,
+		LogoURL: input.LogoUrl,
 		UserID: int(cUser.ID),
 	}
 	db.Create(&publisher)

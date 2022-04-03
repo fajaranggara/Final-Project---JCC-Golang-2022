@@ -152,13 +152,32 @@ definitions:
       updated_at:
         type: string
     type: object
+  models.InstalledGames:
+    properties:
+      created_at:
+        type: string
+      game_name:
+        type: string
+      id:
+        type: integer
+      id_game:
+        type: integer
+      image_url:
+        type: string
+      ratings:
+        type: integer
+      updated_at:
+        type: string
+      user_id:
+        type: integer
+    type: object
   models.Publisher:
     properties:
       created_at:
         type: string
       id:
         type: integer
-      image_url:
+      logo_url:
         type: string
       name:
         type: string
@@ -429,7 +448,7 @@ paths:
       - BearerToken: []
       summary: Change users password.
       tags:
-      - Users
+      - Authentication & Authorization
   /games:
     get:
       description: Get list of Game
@@ -488,6 +507,32 @@ paths:
       security:
       - BearerToken: []
       summary: Bookmarked games
+      tags:
+      - Users
+  /games/{id}/install:
+    patch:
+      description: User installing games
+      parameters:
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Game Id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.InstalledGames'
+      security:
+      - BearerToken: []
+      summary: Install a games
       tags:
       - Users
   /games/{id}/reviews:
@@ -842,7 +887,7 @@ paths:
       - Users
   /users/games/{id}/add-reviews:
     post:
-      description: Create new review
+      description: Create new review and rate(1-5)
       parameters:
       - description: the body to create new review
         in: body
@@ -929,6 +974,57 @@ paths:
       security:
       - BearerToken: []
       summary: Update existing review by id
+      tags:
+      - Users
+  /users/installed/{id}:
+    delete:
+      description: Only user who have permission can uninstall this game
+      parameters:
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: InstalledGames Id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: boolean
+            type: object
+      security:
+      - BearerToken: []
+      summary: Uninstall a games
+      tags:
+      - Users
+  /users/my-games:
+    get:
+      description: Get all installed games by user
+      parameters:
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.InstalledGames'
+            type: array
+      security:
+      - BearerToken: []
+      summary: Get list of installed games
       tags:
       - Users
 swagger: "2.0"

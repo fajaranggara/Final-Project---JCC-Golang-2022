@@ -49,9 +49,15 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 		user.PATCH("/games/:id/add-to-bookmark", controllers.AddGameToBookmark)
 		user.GET("/bookmarks", controllers.ShowUserBookmark)
 		user.DELETE("/bookmarks/:id", controllers.DeleteBookmarkedGame)
+
+		user.PATCH("/games/:id/install", controllers.InstallThisGames)
+		user.GET("/my-games", controllers.ShowInstalledGames)
+		user.DELETE("/installed/:id", controllers.UninstallGame)
+
 		user.POST("/games/:id/add-reviews", controllers.AddReview)
 		user.PATCH("/games/reviews/:id", controllers.UpdateReview)
 		user.DELETE("/games/reviews/:id", controllers.DeleteReview)
+
 	}
 
 

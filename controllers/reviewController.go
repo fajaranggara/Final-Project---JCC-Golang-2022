@@ -11,7 +11,7 @@ import (
 )
 
 type ReviewInput struct {
-	Rate  		int    	  `json:"rate"`
+	Rate  		uint    	  `json:"rate"`
 	Content		string    `json:"content"`
 }
 
@@ -38,7 +38,7 @@ func GetGamesReview(c *gin.Context) {
 
 // Create Review godoc
 // @Summary Create a review
-// @Description Create new review
+// @Description Create new review and rate(1-5)
 // @Tags Users
 // @Param Body body ReviewInput true "the body to create new review"
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
@@ -62,9 +62,14 @@ func AddReview(c *gin.Context) {
 		return
 	}
 
+	if input.Rate > 5 || input.Rate < 1 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Rate must in range 1 - 5"})
+		return
+	}
+
 	id, _ := strconv.Atoi(c.Param("id"))
 	review := models.Review{
-		Rate: input.Rate, 
+		Rate: int(input.Rate), 
 		Content: input.Content, 
 		GameID: id, 
 		UserID: int(cUser.ID),
@@ -77,7 +82,7 @@ func AddReview(c *gin.Context) {
 		return
 	}
 	var updateGameRating models.Game
-	updateGameRating.Ratings = CalculateRating(&game, input.Rate)
+	updateGameRating.Ratings = CalculateRating(&game, int(input.Rate))
 	updateGameRating.RatingsCounter = game.RatingsCounter + 1
 	updateGameRating.UpdatedAt = time.Now()
 
@@ -126,7 +131,7 @@ func UpdateReview(c *gin.Context) {
 
 	var updatedInputReview models.Review
 
-	updatedInputReview.Rate = input.Rate
+	updatedInputReview.Rate = int(input.Rate)
 	updatedInputReview.Content = input.Content
 	updatedInputReview.UpdatedAt = time.Now()
 
