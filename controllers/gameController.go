@@ -176,7 +176,7 @@ func UpdateGame(c *gin.Context) {
 // @Security BearerToken
 // @Produce json
 // @Param id path string true "Game Id"
-// @Success 200 {object} map[string]boolean
+// @Success 200 {object} map[string]string
 // @Router /publisher/games/{id} [delete]
 func DeleteGame(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
@@ -206,7 +206,7 @@ func DeleteGame(c *gin.Context) {
 
 	db.Delete(&game)
 
-	c.JSON(http.StatusOK, gin.H{"data": true})
+	c.JSON(http.StatusOK, gin.H{"data": "Delete game success"})
 }
 
 

@@ -136,7 +136,7 @@ func UpdateCategory(c *gin.Context) {
 // @Security BearerToken
 // @Produce json
 // @Param id path string true "Category Id"
-// @Success 200 {object} map[string]boolean
+// @Success 200 {object} map[string]string
 // @Router /admin/categories/{id} [delete]
 func DeleteCategory(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
@@ -155,5 +155,5 @@ func DeleteCategory(c *gin.Context) {
 
 	db.Delete(&category)
 
-	c.JSON(http.StatusOK, gin.H{"data": true})
+	c.JSON(http.StatusOK, gin.H{"data": "Delete category success"})
 }

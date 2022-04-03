@@ -134,7 +134,7 @@ func UpdateGenre(c *gin.Context) {
 // @Security BearerToken
 // @Produce json
 // @Param id path string true "Genre Id"
-// @Success 200 {object} map[string]boolean
+// @Success 200 {object} map[string]string
 // @Router /admin/genres/{id} [delete]
 func DeleteGenre(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
@@ -153,5 +153,5 @@ func DeleteGenre(c *gin.Context) {
 
 	db.Delete(&genre)
 
-	c.JSON(http.StatusOK, gin.H{"data": true})
+	c.JSON(http.StatusOK, gin.H{"data": "Delete genre success"})
 }

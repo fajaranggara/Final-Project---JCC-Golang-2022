@@ -47,6 +47,7 @@ func ShowInstalledGames(c *gin.Context) {
 // @Success 200 {object} models.InstalledGames
 // @Router /users/games/{id}/install [patch]
 func InstallThisGames(c *gin.Context) {
+	db := c.MustGet("db").(*gorm.DB)
 	//check authorization
 	cUser, _ := models.GetCurrentUser(c)
 	if cUser.Role != "user" {
@@ -54,13 +55,26 @@ func InstallThisGames(c *gin.Context) {
 		return
 	}
 
-	db := c.MustGet("db").(*gorm.DB)
+	var usersInstalledGame []models.InstalledGames
+	if err := db.Where("user_id = ?", cUser.ID).Find(&usersInstalledGame).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Record Not Found"})
+		return
+	}
 
 	var game models.Game
 	if err := db.Where("id = ?", c.Param("id")).First(&game).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record Not Found", "err": c.Param("id")})
 		return
 	}
+
+	// check if this game already installed
+	for _, userGame := range usersInstalledGame {
+		if game.ID == userGame.IdGame {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "You already install this game"})
+			return
+		}
+	}
+
 
 	var install models.InstalledGames
 
@@ -82,7 +96,7 @@ func InstallThisGames(c *gin.Context) {
 // @Security BearerToken
 // @Produce json
 // @Param id path string true "InstalledGames Id"
-// @Success 200 {object} map[string]boolean
+// @Success 200 {object} map[string]string
 // @Router /users/installed/{id} [delete]
 func UninstallGame(c *gin.Context) {
 	//check authorization
@@ -110,5 +124,5 @@ func UninstallGame(c *gin.Context) {
 
 	db.Delete(&install)
 
-	c.JSON(http.StatusOK, gin.H{"data": true})
+	c.JSON(http.StatusOK, gin.H{"data": "Uninstall success"})
 }

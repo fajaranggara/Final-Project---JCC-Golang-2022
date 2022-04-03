@@ -39,14 +39,14 @@ func GetGamesReview(c *gin.Context) {
 // Create Review godoc
 // @Summary Create a review
 // @Description Create new review and rate(1-5)
-// @Tags Users
+// @Tags Games
 // @Param Body body ReviewInput true "the body to create new review"
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
 // @Produce json
 // @Param id path string true "Game Id"
 // @Success 200 {object} models.Review
-// @Router /users/games/{id}/add-reviews [post]
+// @Router /games/{id}/review [post]
 func AddReview(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 	//check authorization
@@ -147,7 +147,7 @@ func UpdateReview(c *gin.Context) {
 // @Security BearerToken
 // @Produce json
 // @Param id path string true "Review Id"
-// @Success 200 {object} map[string]boolean
+// @Success 200 {object} map[string]string
 // @Router /users/games/reviews/{id} [delete]
 func DeleteReview(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
@@ -172,5 +172,5 @@ func DeleteReview(c *gin.Context) {
 
 	db.Delete(&review)
 
-	c.JSON(http.StatusOK, gin.H{"data": true})
+	c.JSON(http.StatusOK, gin.H{"data": "Delete review success"})
 }

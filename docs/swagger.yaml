@@ -288,7 +288,7 @@ paths:
           description: OK
           schema:
             additionalProperties:
-              type: boolean
+              type: string
             type: object
       security:
       - BearerToken: []
@@ -347,7 +347,7 @@ paths:
           description: OK
           schema:
             additionalProperties:
-              type: boolean
+              type: string
             type: object
       security:
       - BearerToken: []
@@ -483,6 +483,64 @@ paths:
       summary: Get Game by id
       tags:
       - Public
+  /games/{id}/bookmark:
+    post:
+      description: User add games to bookmark
+      parameters:
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Game Id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Bookmark'
+      security:
+      - BearerToken: []
+      summary: Bookmark a games
+      tags:
+      - Games
+  /games/{id}/review:
+    post:
+      description: Create new review and rate(1-5)
+      parameters:
+      - description: the body to create new review
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.ReviewInput'
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Game Id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Review'
+      security:
+      - BearerToken: []
+      summary: Create a review
+      tags:
+      - Games
   /games/{id}/reviews:
     get:
       description: Get all reviews of spesific games
@@ -631,7 +689,7 @@ paths:
           description: OK
           schema:
             additionalProperties:
-              type: boolean
+              type: string
             type: object
       security:
       - BearerToken: []
@@ -826,69 +884,11 @@ paths:
           description: OK
           schema:
             additionalProperties:
-              type: boolean
+              type: string
             type: object
       security:
       - BearerToken: []
       summary: Delete games in users bookmark
-      tags:
-      - Users
-  /users/games/{id}/add-reviews:
-    post:
-      description: Create new review and rate(1-5)
-      parameters:
-      - description: the body to create new review
-        in: body
-        name: Body
-        required: true
-        schema:
-          $ref: '#/definitions/controllers.ReviewInput'
-      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Game Id
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.Review'
-      security:
-      - BearerToken: []
-      summary: Create a review
-      tags:
-      - Users
-  /users/games/{id}/add-to-bookmark:
-    patch:
-      description: User add games to bookmark
-      parameters:
-      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Game Id
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.Bookmark'
-      security:
-      - BearerToken: []
-      summary: Bookmarked games
       tags:
       - Users
   /users/games/{id}/install:
@@ -938,7 +938,7 @@ paths:
           description: OK
           schema:
             additionalProperties:
-              type: boolean
+              type: string
             type: object
       security:
       - BearerToken: []
@@ -997,7 +997,7 @@ paths:
           description: OK
           schema:
             additionalProperties:
-              type: boolean
+              type: string
             type: object
       security:
       - BearerToken: []
