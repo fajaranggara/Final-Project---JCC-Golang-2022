@@ -93,7 +93,7 @@ func ChangePassword(c *gin.Context) {
 
 // Become Publisher godoc
 // @Summary Change role into publisher.
-// @Description Create an account before change your role into publisher. User or Admin can change into this role (temporary)
+// @Description Create an account before change your role into publisher. User or Admin can change into this role
 // @Tags Authentication & Authorization
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
@@ -139,7 +139,7 @@ func RegisPublisher(c *gin.Context) {
 
 // Become Admin godoc
 // @Summary Change role into admin.
-// @Description Create an account before chhange your role. User or Publisher can change into this role (temporary)
+// @Description Create an account before chhange your role. User or Publisher can change into this role (temporary func)
 // @Tags Authentication & Authorization
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken

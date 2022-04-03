@@ -532,7 +532,7 @@ paths:
             $ref: '#/definitions/models.InstalledGames'
       security:
       - BearerToken: []
-      summary: Install a games
+      summary: Install this games
       tags:
       - Games
   /games/{id}/review:
@@ -792,7 +792,7 @@ paths:
   /regist-admin:
     patch:
       description: Create an account before chhange your role. User or Publisher can
-        change into this role (temporary)
+        change into this role (temporary func)
       parameters:
       - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
         in: header
@@ -821,7 +821,7 @@ paths:
   /regist-publisher:
     patch:
       description: Create an account before change your role into publisher. User
-        or Admin can change into this role (temporary)
+        or Admin can change into this role
       parameters:
       - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
         in: header

@@ -37,7 +37,7 @@ func ShowInstalledGames(c *gin.Context) {
 }
 
 // Install godoc
-// @Summary Install a games
+// @Summary Install this games
 // @Description User installing games
 // @Tags Games
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"

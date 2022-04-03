@@ -501,7 +501,7 @@ const docTemplate = `{
                 "tags": [
                     "Games"
                 ],
-                "summary": "Install a games",
+                "summary": "Install this games",
                 "parameters": [
                     {
                         "type": "string",
@@ -929,7 +929,7 @@ const docTemplate = `{
                         "BearerToken": []
                     }
                 ],
-                "description": "Create an account before chhange your role. User or Publisher can change into this role (temporary)",
+                "description": "Create an account before chhange your role. User or Publisher can change into this role (temporary func)",
                 "produces": [
                     "application/json"
                 ],
@@ -973,7 +973,7 @@ const docTemplate = `{
                         "BearerToken": []
                     }
                 ],
-                "description": "Create an account before change your role into publisher. User or Admin can change into this role (temporary)",
+                "description": "Create an account before change your role into publisher. User or Admin can change into this role",
                 "produces": [
                     "application/json"
                 ],
